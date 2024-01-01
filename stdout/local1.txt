@@ -1,0 +1,286 @@
+INFO:     Will watch for changes in these directories: ['/home/sngwon/workspace/_AgentVerse']
+INFO:     Uvicorn running on http://127.0.0.1:10002 (Press CTRL+C to quit)
+INFO:     Started reloader process [10077] using StatReload
+INFO:     Started server process [10079]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ [0m BMTools is not installed, tools in the simulation environment cannot be used. To install BMTools, please follow the instruction in the README.md file. If you aren't running a *simulation* case with tool, you can ignore this warning.
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, make_decision
+sngwon, simulation.next
+
+is_player agent_ids
+sngwon, environment step
+llm:  None
+model_dict:  None
+==in environments/simulation_env/pokemon.py, chatgpt==
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Ugh, I can\'t believe I lost to Brendan. I really need to train my Pokémon more.\nAction: MoveTo\nAction Input: {"to": "Pokémon Center"}' function_name='' function_arguments=None send_tokens=789 recv_tokens=39 total_tokens=828
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Pok\\u00e9mon Center", "action": "MoveTo"}'}, log='Thought: Ugh, I can\'t believe I lost to Brendan. I really need to train my Pokémon more.\nAction: MoveTo\nAction Input: {"to": "Pokémon Center"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Pok\\u00e9mon Center", "action": "MoveTo"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I should greet May and see what she\'s up to.\nAction: Speak\nAction Input: {"to": "May", "text": "Good morning, May! How are you today?"}' function_name='' function_arguments=None send_tokens=823 recv_tokens=42 total_tokens=865
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}'}, log='Thought: I should greet May and see what she\'s up to.\nAction: Speak\nAction Input: {"to": "May", "text": "Good morning, May! How are you today?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I should talk to my dad, Professor Birch, and see how he\'s doing.\nAction: Speak\nAction Input: {"to": "Birch", "text": "Hey Dad, how\'s it going?"}' function_name='' function_arguments=None send_tokens=698 recv_tokens=47 total_tokens=745
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Birch", "text": "Hey Dad, how\'s it going?", "action": "Speak"}'}, log='Thought: I should talk to my dad, Professor Birch, and see how he\'s doing.\nAction: Speak\nAction Input: {"to": "Birch", "text": "Hey Dad, how\'s it going?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Birch", "text": "Hey Dad, how\'s it going?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I need to gather my team and prepare for our mission to Mt. Chimney. We must ensure that our plan to awaken Groudon goes smoothly.\nAction: MoveTo\nAction Input: {"to": "Pokémon Gym"}' function_name='' function_arguments=None send_tokens=769 recv_tokens=49 total_tokens=818
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Pok\\u00e9mon Gym", "action": "MoveTo"}'}, log='Thought: I need to gather my team and prepare for our mission to Mt. Chimney. We must ensure that our plan to awaken Groudon goes smoothly.\nAction: MoveTo\nAction Input: {"to": "Pokémon Gym"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Pok\\u00e9mon Gym", "action": "MoveTo"}' sender='Maxie' receiver={'Maxie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Ah, the Bike Store. I\'ve always been curious about the latest bike models they have here. Perhaps I can find some inspiration for a new invention.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}' function_name='' function_arguments=None send_tokens=872 recv_tokens=49 total_tokens=921
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"last_time": "5 minutes", "action": "Look around"}'}, log='Thought: Ah, the Bike Store. I\'ve always been curious about the latest bike models they have here. Perhaps I can find some inspiration for a new invention.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"last_time": "5 minutes", "action": "Look around"}' sender='Joseph' receiver={'Joseph'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I should gather information about the current situation and see if there are any updates on Team Magma\'s activities. The more I know, the better prepared I can be to counter their plans.\nAction: Speak\nAction Input: {"to": "Shop Owner", "text": "Good morning. Have you heard anything about Team Magma\'s recent activities?"}' function_name='' function_arguments=None send_tokens=825 recv_tokens=74 total_tokens=899
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Shop Owner", "text": "Good morning. Have you heard anything about Team Magma\'s recent activities?", "action": "Speak"}'}, log='Thought: I should gather information about the current situation and see if there are any updates on Team Magma\'s activities. The more I know, the better prepared I can be to counter their plans.\nAction: Speak\nAction Input: {"to": "Shop Owner", "text": "Good morning. Have you heard anything about Team Magma\'s recent activities?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Shop Owner", "text": "Good morning. Have you heard anything about Team Magma\'s recent activities?", "action": "Speak"}' sender='Archie' receiver={'Archie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+ [0m : 
+ [0m Birch: {"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}
+ [0m Steven: {"to": "Pok\u00e9mon Center", "action": "MoveTo"}
+ [0m Maxie: {"to": "Pok\u00e9mon Gym", "action": "MoveTo"}
+ [0m : 
+ [0m Joseph: {"last_time": "5 minutes", "action": "Look around"}
+INFO:     127.0.0.1:54654 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54654 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54654 - "POST /update_location HTTP/1.1" 200 OK
+sngwon, make_decision
+sngwon, simulation.next
+
+is_player agent_ids
+sngwon, environment step
+llm:  None
+model_dict:  None
+==in environments/simulation_env/pokemon.py, chatgpt==
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: It seems like there\'s no one here at the Shop. I should find Brendan and discuss our next move.\nAction: MoveTo\nAction Input: {"to": "Pokémon Center"}' function_name='' function_arguments=None send_tokens=825 recv_tokens=40 total_tokens=865
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Pok\\u00e9mon Center", "action": "MoveTo"}'}, log='Thought: It seems like there\'s no one here at the Shop. I should find Brendan and discuss our next move.\nAction: MoveTo\nAction Input: {"to": "Pokémon Center"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Pok\\u00e9mon Center", "action": "MoveTo"}' sender='Archie' receiver={'Archie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Good morning, Professor Birch! I\'m feeling great today. I\'m excited to continue my Pokémon journey and catch some new Pokémon.\nAction: MoveTo\nAction Input: {"to": "Pokémon Gym"}' function_name='' function_arguments=None send_tokens=712 recv_tokens=44 total_tokens=756
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Pok\\u00e9mon Gym", "action": "MoveTo"}'}, log='Thought: Good morning, Professor Birch! I\'m feeling great today. I\'m excited to continue my Pokémon journey and catch some new Pokémon.\nAction: MoveTo\nAction Input: {"to": "Pokémon Gym"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Pok\\u00e9mon Gym", "action": "MoveTo"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Good morning, May! How are you today?\nAction: Speak\nAction Input: {"to": "May", "text": "Good morning, May! How are you today?"}' function_name='' function_arguments=None send_tokens=837 recv_tokens=40 total_tokens=877
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}'}, log='Thought: Good morning, May! How are you today?\nAction: Speak\nAction Input: {"to": "May", "text": "Good morning, May! How are you today?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I need to heal my Pokémon after that tough battle with Brendan.\nAction: Speak\nAction Input: {"to": "Nurse Joy", "text": "Excuse me, Nurse Joy. Could you please heal my Pokémon?"}' function_name='' function_arguments=None send_tokens=799 recv_tokens=49 total_tokens=848
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Nurse Joy", "text": "Excuse me, Nurse Joy. Could you please heal my Pok\\u00e9mon?", "action": "Speak"}'}, log='Thought: I need to heal my Pokémon after that tough battle with Brendan.\nAction: Speak\nAction Input: {"to": "Nurse Joy", "text": "Excuse me, Nurse Joy. Could you please heal my Pokémon?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Nurse Joy", "text": "Excuse me, Nurse Joy. Could you please heal my Pok\\u00e9mon?", "action": "Speak"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+[31mFailed to parse output of the model:Thought: Ah, the Pokémon Gym. A place where Trainers come to prove their worth. But for me, it serves a different purpose. It is a stepping stone towards achieving my ultimate goal. I must train my Pokémon and become stronger in order to harness the power of Groudon. 
+  [0m 
+ [0m Retrying...
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I\'ve been meaning to check out the latest bike models at the Bike Store. It\'s always good to stay up to date with the latest technology, even if I\'m not planning on buying one right now.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}' function_name='' function_arguments=None send_tokens=879 recv_tokens=60 total_tokens=939
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"last_time": "5 minutes", "action": "Look around"}'}, log='Thought: I\'ve been meaning to check out the latest bike models at the Bike Store. It\'s always good to stay up to date with the latest technology, even if I\'m not planning on buying one right now.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"last_time": "5 minutes", "action": "Look around"}' sender='Joseph' receiver={'Joseph'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Ah, the Pokémon Gym. A place where trainers come to test their skills. Perhaps I can find a worthy opponent here. But first, I should familiarize myself with the gym and its surroundings.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}' function_name='' function_arguments=None send_tokens=780 recv_tokens=58 total_tokens=838
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"last_time": "5 minutes", "action": "Look around"}'}, log='Thought: Ah, the Pokémon Gym. A place where trainers come to test their skills. Perhaps I can find a worthy opponent here. But first, I should familiarize myself with the gym and its surroundings.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"last_time": "5 minutes", "action": "Look around"}' sender='Maxie' receiver={'Maxie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+ [0m : 
+ [0m Birch: {"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}
+ [0m : 
+ [0m Maxie: {"last_time": "5 minutes", "action": "Look around"}
+ [0m Archie: {"to": "Pok\u00e9mon Center", "action": "MoveTo"}
+ [0m Joseph: {"last_time": "5 minutes", "action": "Look around"}
+INFO:     127.0.0.1:54654 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54690 - "POST /update_location HTTP/1.1" 200 OK
+sngwon, make_decision
+sngwon, simulation.next
+
+is_player agent_ids
+sngwon, environment step
+llm:  None
+model_dict:  None
+==in environments/simulation_env/pokemon.py, chatgpt==
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Good morning, May! I hope you\'re doing well today.\nAction: Speak\nAction Input: {"to": "May", "text": "Good morning, May! How are you today?"}' function_name='' function_arguments=None send_tokens=851 recv_tokens=43 total_tokens=894
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}'}, log='Thought: Good morning, May! I hope you\'re doing well today.\nAction: Speak\nAction Input: {"to": "May", "text": "Good morning, May! How are you today?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: Good morning, Professor Birch! I\'m feeling great today. The weather is so nice, perfect for a day of Pokémon training.\nAction: MoveTo\nAction Input: {"to": "Pokémon Gym"}' function_name='' function_arguments=None send_tokens=726 recv_tokens=44 total_tokens=770
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Pok\\u00e9mon Gym", "action": "MoveTo"}'}, log='Thought: Good morning, Professor Birch! I\'m feeling great today. The weather is so nice, perfect for a day of Pokémon training.\nAction: MoveTo\nAction Input: {"to": "Pokémon Gym"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Pok\\u00e9mon Gym", "action": "MoveTo"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: This Pokémon Gym is a perfect place to train and strengthen my team. I must focus on preparing them for our ultimate goal. But first, I should check if there are any new trainers here who are worthy opponents.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}' function_name='' function_arguments=None send_tokens=788 recv_tokens=61 total_tokens=849
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"last_time": "5 minutes", "action": "Look around"}'}, log='Thought: This Pokémon Gym is a perfect place to train and strengthen my team. I must focus on preparing them for our ultimate goal. But first, I should check if there are any new trainers here who are worthy opponents.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"last_time": "5 minutes", "action": "Look around"}' sender='Maxie' receiver={'Maxie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I need to heal my Pokémon after that tough battle with Brendan.\nAction: Speak\nAction Input: {"to": "Archie", "text": "Hello, Archie. How are you doing today?"}' function_name='' function_arguments=None send_tokens=797 recv_tokens=44 total_tokens=841
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Archie", "text": "Hello, Archie. How are you doing today?", "action": "Speak"}'}, log='Thought: I need to heal my Pokémon after that tough battle with Brendan.\nAction: Speak\nAction Input: {"to": "Archie", "text": "Hello, Archie. How are you doing today?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Archie", "text": "Hello, Archie. How are you doing today?", "action": "Speak"}' sender='Steven' receiver={'Steven', 'Archie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: I\'ve always wanted to get a new bike for myself. This is the perfect opportunity to check out the latest models.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}' function_name='' function_arguments=None send_tokens=886 recv_tokens=42 total_tokens=928
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"last_time": "5 minutes", "action": "Look around"}'}, log='Thought: I\'ve always wanted to get a new bike for myself. This is the perfect opportunity to check out the latest models.\nAction: Look around\nAction Input: {"last_time": "5 minutes"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"last_time": "5 minutes", "action": "Look around"}' sender='Joseph' receiver={'Joseph'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+==in agents/simulation_agent/conversation.py, response==
+content='Thought: It seems like we\'ve arrived at the Pokémon Center. I should take this opportunity to heal my Pokémon and perhaps have a chat with Steven.\nAction: Speak\nAction Input: {"to": "Steven", "text": "Steven, my friend! How are you doing today?"}' function_name='' function_arguments=None send_tokens=835 recv_tokens=59 total_tokens=894
+<class 'agentverse.llms.base.LLMResult'>
+===============
+==in agents/simulation_agent/conversation.py, parsed_response==
+AgentFinish(return_values={'output': '{"to": "Steven", "text": "Steven, my friend! How are you doing today?", "action": "Speak"}'}, log='Thought: It seems like we\'ve arrived at the Pokémon Center. I should take this opportunity to heal my Pokémon and perhaps have a chat with Steven.\nAction: Speak\nAction Input: {"to": "Steven", "text": "Steven, my friend! How are you doing today?"}')
+<class 'agentverse.utils.AgentFinish'>
+===============
+==in agents/simulation_agent/conversation.py, message==
+content='{"to": "Steven", "text": "Steven, my friend! How are you doing today?", "action": "Speak"}' sender='Archie' receiver={'Steven', 'Archie'} sender_agent=None tool_response=[]
+<class 'agentverse.message.Message'>
+===============
+ [0m : 
+ [0m Birch: {"to": "May", "text": "Good morning, May! How are you today?", "action": "Speak"}
+ [0m Steven: {"to": "Archie", "text": "Hello, Archie. How are you doing today?", "action": "Speak"}
+ [0m Maxie: {"last_time": "5 minutes", "action": "Look around"}
+ [0m : 
+ [0m Joseph: {"last_time": "5 minutes", "action": "Look around"}
+INFO:     127.0.0.1:54690 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10079]
+INFO:     Stopping reloader process [10077]

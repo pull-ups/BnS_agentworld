@@ -36,7 +36,10 @@ class BaseAgent(BaseModel):
         pass
 
     @abstractmethod
-    def astep(self, env_description: str = "") -> Message:
+    def astep(self, prompt: str = "") -> Message:
+        print("==in agents/base.py, astep==")
+        print("prompt: ", prompt)
+        print("====")
         """Asynchronous version of step"""
         pass
 

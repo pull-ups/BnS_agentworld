@@ -35,6 +35,9 @@ class BaseLLM(BaseModel):
     @abstractmethod
     def agenerate_response(self, **kwargs) -> LLMResult:
         pass
+    @abstractmethod
+    def agenerate_response_local(self, **kwargs) -> str:
+        pass
 
 
 class BaseChatModel(BaseLLM):

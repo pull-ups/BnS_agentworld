@@ -1,6 +1,6 @@
 from __future__ import annotations
 from colorama import Fore
-
+import random
 # import logging
 from agentverse.logging import get_logger
 import bdb
@@ -27,6 +27,8 @@ class ConversationAgent(BaseAgent):
             try:
                 response = self.llm.generate_response(prompt)
                 parsed_response = self.output_parser.parse(response)
+                
+
                 break
             except KeyboardInterrupt:
                 raise
@@ -50,17 +52,33 @@ class ConversationAgent(BaseAgent):
     async def astep(self, env_description: str = "") -> Message:
         """Asynchronous version of step"""
         prompt = self._fill_prompt_template(env_description)
-
+        # print("==in agents/simulation_agent/conversation.py, prompt==")
+        # print(prompt)
+        # print("===============")
         parsed_response = None
         for i in range(self.max_retry):
             try:
                 # if self.name == "Code Reviewer":
-                logger.debug(prompt, "Prompt", Fore.CYAN)
+                #logger.debug(prompt, "Prompt", Fore.CYAN)
                 response = await self.llm.agenerate_response(prompt)
-
+                # print("==in agents/simulation_agent/conversation.py, response==")
+                # print(response)
+                # print("===============")
                 # logging.info(f"{self.name}'s request result:"
                 #              f" {response.content}")
                 parsed_response = self.output_parser.parse(response)
+                
+                
+                
+                print("==in agents/simulation_agent/conversation.py, response==")
+                print(response)
+                print(type(response))
+                print("===============")  
+                print("==in agents/simulation_agent/conversation.py, parsed_response==")
+                print(parsed_response)
+                print(type(parsed_response))
+                print("===============")
+                
                 break
             except (KeyboardInterrupt, bdb.BdbQuit):
                 raise
@@ -79,7 +97,38 @@ class ConversationAgent(BaseAgent):
             sender=self.name,
             receiver=self.get_receiver(),
         )
+        print("==in agents/simulation_agent/conversation.py, message==")
+        print(message)
+        print(type(message))
+        print("===============")
         return message
+
+    async def astep_local(self, env_description: str = "") -> Message:
+        print("sngwon, astep_local==")
+        """Asynchronous version of step"""
+        prompt = self._fill_prompt_template(env_description)
+        
+
+        response = await self.llm.agenerate_response_local(prompt)
+        print("==in agents/simulation_agent/conversation.py, response==")
+        print(response)
+        print("==============")
+        
+        arr=['{"to": "Shop", "action": "MoveTo"}', '{"to": "Bike Store", "action": "MoveTo"}', '{"to": "Park", "action": "MoveTo"}']
+        
+        
+        content_from_local=random.choice(arr)
+        message = Message(
+            content=content_from_local,
+            sender=self.name,
+            receiver=self.get_receiver(),
+        )
+        print("==in agents/simulation_agent/conversation.py, message==")
+        print(message)
+        print(type(message))
+        print("===============")
+        return message
+
 
     def _fill_prompt_template(self, env_description: str = "") -> str:
         """Fill the placeholders in the prompt template

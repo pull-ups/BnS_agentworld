@@ -105,6 +105,7 @@ class OpenAIChat(BaseChatModel):
     total_completion_tokens: int = 0
 
     def __init__(self, max_retry: int = 3, **kwargs):
+        print("sngwon, llm openai init")
         args = OpenAIChatArgs()
         args = args.dict()
         for k, v in args.items():
@@ -144,7 +145,7 @@ class OpenAIChat(BaseChatModel):
         functions: List[dict] = [],
     ) -> LLMResult:
         messages = self.construct_messages(prepend_prompt, history, append_prompt)
-        logger.log_prompt(messages)
+        #logger.log_prompt(messages)
         try:
             # Execute function call
             if functions != []:
@@ -206,8 +207,10 @@ class OpenAIChat(BaseChatModel):
         functions: List[dict] = [],
     ) -> LLMResult:
         messages = self.construct_messages(prepend_prompt, history, append_prompt)
-        logger.log_prompt(messages)
-
+        #logger.log_prompt(messages)
+        # print("==in llms/openai prompt==")
+        # print(messages)
+        # print("=============")
         try:
             if functions != []:
                 async with ClientSession(trust_env=True) as session:
@@ -217,6 +220,9 @@ class OpenAIChat(BaseChatModel):
                         functions=functions,
                         **self.args.dict(),
                     )
+                    # print("==in llms/openai response==")
+                    # print(response)
+                    # print("=============")
                 if response["choices"][0]["message"].get("function_call") is not None:
                     function_name = response["choices"][0]["message"]["function_call"][
                         "name"
@@ -293,6 +299,30 @@ class OpenAIChat(BaseChatModel):
                 )
         except (OpenAIError, KeyboardInterrupt, json.decoder.JSONDecodeError) as error:
             raise
+
+
+
+
+    @retry(
+        stop=stop_after_attempt(20),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True,
+    )
+    async def agenerate_response_local(
+        self,
+        prepend_prompt: str = "",
+        history: List[dict] = [],
+        append_prompt: str = "",
+        functions: List[dict] = [],
+    ) -> str:
+        
+        
+        
+        
+        return "local success"
+
+
+
 
     def construct_messages(
         self, prepend_prompt: str, history: List[dict], append_prompt: str

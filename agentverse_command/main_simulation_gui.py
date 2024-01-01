@@ -1,5 +1,9 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from agentverse.gui import GUI
+#from agentverse.gui_sw import GUI
+
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -21,6 +25,8 @@ parser.add_argument("--server_name",
 args = parser.parse_args()
 
 def cli_main():
+    print("=========")
+    print(args.tasks_dir)
     ui = GUI(args.task, args.tasks_dir,ui_kwargs={"share":args.share,"server_name":args.server_name})
     ui.launch()
 

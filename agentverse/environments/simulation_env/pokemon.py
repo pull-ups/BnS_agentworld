@@ -30,7 +30,10 @@ class PokemonEnvironment(BaseEnvironment):
     """
 
     agents: List[BaseAgent]
-    locations_to_agents: Dict[str, Set[str]]
+    #sngwon
+    #locations_to_agents: Dict[str, Set[str]]
+    locations_to_agents: Dict[str, Optional[Set[str]]]
+    #/sngwon
     # locations_descriptions: Dict[str, str]
     time: datetime.datetime = datetime.datetime(2021, 1, 1, 8, 0, 0)
     rule: Rule
@@ -57,7 +60,14 @@ class PokemonEnvironment(BaseEnvironment):
         # locations_descriptions = {}
         locations_config = locations
         for loc in locations_config:
-            locations_to_agents[loc["name"]] = set(loc["init_agents"])
+            #sngwon
+            #locations_to_agents[loc["name"]] = set(loc["init_agents"])
+            
+            if loc["init_agents"]==[None]:
+                locations_to_agents[loc["name"]] = set()
+            else:
+                locations_to_agents[loc["name"]] = set(loc["init_agents"])
+            #/sngwon
             # locations_descriptions[loc["name"]] = loc["description"]
         super().__init__(
             rule=rule,
@@ -73,16 +83,60 @@ class PokemonEnvironment(BaseEnvironment):
         receiver: str = None,
         receiver_id: Optional[int] = None,
         agent_ids: Optional[List[int]] = None,
+        llm: str = None,
+        model_dict: Optional[List[Any]] = None,
     ) -> List[Message]:
         """Run one step of the environment"""
 
         # Get the next agent index
         # time.sleep(8)
         # return [Message(content="Test", sender="May", receiver=["May"])]
-        if is_player:
-            return await self._respond_to_player(player_content, receiver, receiver_id)
+        print("sngwon, environment step")
+        
+        print("llm: ", llm)
+        print("model_dict: ", model_dict)
+        if llm is not None:
+            print("==in environments/simulation_env/pokemon.py, local==")
+            if is_player:
+                return await self._respond_to_player_local(player_content, receiver, receiver_id)
+            else:
+                return await self._routine_step_local(agent_ids)
         else:
-            return await self._routine_step(agent_ids)
+            print("==in environments/simulation_env/pokemon.py, chatgpt==")
+            if is_player:
+                return await self._respond_to_player(player_content, receiver, receiver_id)
+            else:
+                return await self._routine_step(agent_ids)
+
+
+    async def _routine_step_local(self, agent_ids) -> List[Message]:
+        print("sngwon, _routine_step_local==")
+        self.rule.update_visible_agents(self)
+
+        # agent_ids = self.rule.get_next_agent_idx(self)
+
+        # Generate current environment description
+        env_descriptions = self.rule.get_env_description(self)
+
+        # Generate the next message
+        messages = await asyncio.gather(
+            *[self.agents[i].astep_local(env_descriptions[i]) for i in agent_ids]
+        )
+        # messages = self.get_test_messages()
+
+        # Some rules will select certain messages from all the messages
+        selected_messages = self.rule.select_message(self, messages)
+
+        # Update the memory of the agents
+        self.last_messages = selected_messages
+        self.rule.update_memory(self)
+        self.print_messages(selected_messages)
+
+        self.cnt_turn += 1
+        self.time += datetime.timedelta(minutes=5)
+
+        return selected_messages
+
 
     async def _routine_step(self, agent_ids) -> List[Message]:
         self.rule.update_visible_agents(self)

@@ -39,6 +39,7 @@ class BaseEnvironment(BaseModel):
 
     @abstractmethod
     async def step(self) -> List[Message]:
+        
         """Run one step of the environment"""
         pass
 

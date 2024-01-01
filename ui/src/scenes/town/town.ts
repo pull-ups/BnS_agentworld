@@ -55,7 +55,8 @@ export class TownScene extends Scene {
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).update();
     });
-    if (this.timeFrame > 5000) {
+    // if (this.timeFrame > 5000) {
+    if (this.timeFrame > 10000) {
       if (!this.isQuerying) {
         this.isQuerying = true;
         var allNpcs = this.npcGroup.getChildren();

@@ -24,7 +24,6 @@ class Simulation:
         """
         # Prepare the config of the task
         task_config = prepare_task_config(task, tasks_dir)
-
         # Build the agents
         agents = []
         for agent_configs in task_config["agents"]:
@@ -52,6 +51,10 @@ class Simulation:
 
     def next(self, *args, **kwargs):
         """Run the environment for one step and return the return message."""
+        print("sngwon, simulation.next")
+        print(*args)
+        print(*kwargs)
+        
         return_message = asyncio.run(self.environment.step(*args, **kwargs))
         return return_message
 

@@ -12,6 +12,8 @@ from .simulation_env.basic import BasicEnvironment
 from .simulation_env.reflection import ReflectionEnvironment
 from .simulation_env.pokemon import PokemonEnvironment
 from .simulation_env.prisoner_dilemma import PrisonerDilemmaEnvironment
+from .simulation_env.nc import ncEnvironment
+
 from .simulation_env.sde_team import SdeTeamEnvironment
 from .simulation_env.sde_team_given_tests import SdeTeamGivenTestsEnvironment
 

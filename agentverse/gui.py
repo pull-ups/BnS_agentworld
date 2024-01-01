@@ -3,7 +3,7 @@ import base64
 import itertools
 import json
 from typing import Dict, List, Tuple
-
+import random
 import cv2
 import gradio as gr
 
@@ -40,6 +40,8 @@ class GUI:
         """
         self.messages = []
         self.task = task
+
+        
         self.ui_kwargs = ui_kwargs
         if task == "tasksolving/brainstorming":
             self.backend = TaskSolving.from_task(task, tasks_dir)
@@ -60,6 +62,11 @@ class GUI:
     def get_avatar(self, idx):
         if idx == -1:
             img = cv2.imread(f"{IMG_PATH}/db_diag/-1.png")
+            
+        elif self.task == "simulation/nc":
+            img = cv2.imread(f"{IMG_PATH}/nc/{idx}.png")
+        
+        
         elif self.task == "simulation/prisoner_dilemma":
             img = cv2.imread(f"{IMG_PATH}/prison/{idx}.png")
         elif self.task == "simulation/db_diag":
@@ -142,6 +149,7 @@ class GUI:
             *[gr.Button.update(visible=statu) for statu in self.solution_status],
             gr.Box.update(visible=any(self.solution_status)),
         )
+    
 
     def reset(self, stu_num=0):
         """
@@ -166,6 +174,29 @@ class GUI:
 
         if self.task == "simulation/prisoner_dilemma":
             background = cv2.imread(f"{IMG_PATH}/prison/case_1.png")
+        elif self.task == "simulation/nc":
+            #background = cv2.imread(f"{IMG_PATH}/nc/background.png")
+            background = cv2.imread(f"{IMG_PATH}/nc/background_bns.png")
+            back_h, back_w, _ = background.shape
+            
+            for stu_cnt in range(self.stu_num):
+                img = cv2.imread(
+                    #f"{IMG_PATH}/{(stu_cnt - 1) % 11 + 1}.png",
+                    f"{IMG_PATH}/nc/npc.png",
+                    cv2.IMREAD_UNCHANGED,
+                )
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+
+                cover_img(
+                    background,
+                    img,
+                    (random.randint(0, back_h-30), random.randint(0, back_w-200)),
+                )
+
+                
+         
+            
+            
         elif self.task == "simulation/db_diag":
             background = cv2.imread(f"{IMG_PATH}/db_diag/background.png")
         elif "sde" in self.task:
@@ -219,6 +250,40 @@ class GUI:
                 cover_img(background, img, (550, 480))
             if data[2]["message"] != "":
                 cover_img(background, img, (550, 880))
+        elif self.task == "simulation/nc":
+            background = cv2.imread(f"{IMG_PATH}/background.png")
+            back_h, back_w, _ = background.shape
+            stu_cnt = 0
+            if data[stu_cnt]["message"] not in ["", "[RaiseHand]"]:
+                img = cv2.imread(f"{IMG_PATH}/speaking.png", cv2.IMREAD_UNCHANGED)
+                cover_img(background, img, (370, 1250))
+            for h_begin, w_begin in itertools.product(
+                range(800, back_h, 300), range(135, back_w - 200, 200)
+            ):
+                stu_cnt += 1
+                if stu_cnt <= self.stu_num:
+                    img = cv2.imread(
+                        f"{IMG_PATH}/{(stu_cnt - 1) % 11 + 1}.png", cv2.IMREAD_UNCHANGED
+                    )
+                    cover_img(
+                        background,
+                        img,
+                        (h_begin - 30 if img.shape[0] > 190 else h_begin, w_begin),
+                    )
+                    if "[RaiseHand]" in data[stu_cnt]["message"]:
+                        # elif data[stu_cnt]["message"] == "[RaiseHand]":
+                        img = cv2.imread(f"{IMG_PATH}/hand.png", cv2.IMREAD_UNCHANGED)
+                        cover_img(background, img, (h_begin - 90, w_begin + 10))
+                    elif data[stu_cnt]["message"] not in ["", "[RaiseHand]"]:
+                        img = cv2.imread(
+                            f"{IMG_PATH}/speaking.png", cv2.IMREAD_UNCHANGED
+                        )
+                        cover_img(background, img, (h_begin - 90, w_begin + 10))
+
+                else:
+                    img = cv2.imread(f"{IMG_PATH}/empty.png", cv2.IMREAD_UNCHANGED)
+                    cover_img(background, img, (h_begin, w_begin))
+        
         elif self.task == "simulation/db_diag":
             background = cv2.imread(f"{IMG_PATH}/db_diag/background.png")
             img = cv2.imread(f"{IMG_PATH}/db_diag/speaking.png", cv2.IMREAD_UNCHANGED)

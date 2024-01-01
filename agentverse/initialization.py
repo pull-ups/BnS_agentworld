@@ -71,7 +71,9 @@ def prepare_task_config(task, tasks_dir):
     """Read the yaml config of the given task in `tasks` directory."""
     all_task_dir = tasks_dir
     task_path = os.path.join(all_task_dir, task)
+    #sngwon
     config_path = os.path.join(task_path, "config.yaml")
+    #config_path = os.path.join(task_path, "config_nc.yaml")
     if not os.path.exists(task_path):
         all_tasks = []
         for task in os.listdir(all_task_dir):
