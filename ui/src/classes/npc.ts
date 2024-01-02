@@ -69,7 +69,8 @@ export class NPC extends Actor {
           this.changeDirection(this.finalDirection);
           this.emitTurnEvent();
           if (this.targetLocation != undefined) {
-            fetch("http://127.0.0.1:10002/update_location", {
+            //fetch("http://10.1.1.151:10002/update_location", {
+            fetch("http://127.0.0.1:10003/update_location", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

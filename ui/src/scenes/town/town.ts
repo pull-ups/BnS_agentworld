@@ -71,8 +71,8 @@ export class TownScene extends Scene {
             shouldUpdate.push(i);
           }
         }
-
-        fetch("http://127.0.0.1:10002/make_decision", {
+        //fetch("http://10.1.1.151:10002/make_decision", {
+        fetch("http://127.0.0.1:10003/make_decision", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -369,7 +369,8 @@ export class TownScene extends Scene {
       },
       loop: true,
     });
-    fetch("http://127.0.0.1:10002/chat", {
+    //fetch("http://10.1.1.151:10002/chat", {
+    fetch("http://127.0.0.1:10003/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
