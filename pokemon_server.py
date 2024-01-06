@@ -103,42 +103,22 @@ def chat(message: UserRequest):
 
 @app.post("/make_decision")
 def update(message: RoutineRequest):
-    print("sngwon, make_decision")
-    response = agent_verse.next(is_player=False, agent_ids=message.agent_ids)
-    #response = agent_verse.next(is_player=False, agent_ids=message.agent_ids, llm="local")
+    print(("Shouldupdate"))
+    print(message)
+    #response = agent_verse.next(is_player=False, agent_ids=message.agent_ids)
+    response = agent_verse.next(is_player=False, agent_ids=message.agent_ids, llm="local")
     #response = agent_verse.next(is_player=False, agent_ids=message.agent_ids, llm="local", model_dict=model_dict)
-    print("sngwon, send response")
 
-    print([r.dict() for r in response])
+    #print([r.dict() for r in response])
     return [r.dict() for r in response]
 
 
 
 
-    # import json
-
-    # return [
-    #     # {
-    #     #     "content": json.dumps(
-    #     #         {
-    #     #             "to": "Maxie",
-    #     #             "action": "Speak",
-    #     #             "text": "Hello Hello Hello Hello Hello Hello",
-    #     #         }
-    #     #     )
-    #     # }
-    #     {"content": json.dumps({"to": "Pokémon Center", "action": "MoveTo"})}
-    # ]
-    
-    
-# @app.post("/make_decision_nc")
-# def update(message: RoutineRequest):
-
-#     response = agent_verse.next(is_player=False, agent_ids=message.agent_ids, llm="local")
-
-#     return [r.dict() for r in response]
 
 @app.post("/update_location")
 def update_location(message: UpdateRequest):
     agent_verse.update_state(message.agent_locations)
     return {"message": "Update location complete"}
+
+

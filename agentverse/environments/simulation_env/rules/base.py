@@ -89,6 +89,13 @@ class SimulationRule(BaseRule):
     ) -> List[str]:
         """Return the description of the environment for each agent"""
         return self.describer.get_env_description(environment, *args, **kwargs)
+    
+    def get_nearbyNPCs(
+        self, environment: BaseEnvironment, *args, **kwargs
+    ) -> List[str]:
+        """Return the description of the environment for each agent"""
+        return self.describer.get_nearbyNPCs(environment, *args, **kwargs)    
+
 
     def reset(self) -> None:
         self.order.reset()

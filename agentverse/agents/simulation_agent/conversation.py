@@ -1,6 +1,9 @@
 from __future__ import annotations
 from colorama import Fore
 import random
+import time
+import asyncio
+
 # import logging
 from agentverse.logging import get_logger
 import bdb
@@ -16,9 +19,12 @@ from agentverse.agents.base import BaseAgent
 
 logger = get_logger()
 
-
+def pick_one_from_arr(arr):
+    return arr[random.randint(0, len(arr)-1)]
+        
 @agent_registry.register("conversation")
 class ConversationAgent(BaseAgent):
+    
     def step(self, env_description: str = "") -> Message:
         prompt = self._fill_prompt_template(env_description)
 
@@ -52,8 +58,6 @@ class ConversationAgent(BaseAgent):
     async def astep(self, env_description: str = "") -> Message:
         """Asynchronous version of step"""
         prompt = self._fill_prompt_template(env_description)
-        # print("==in agents/simulation_agent/conversation.py, prompt==")
-        # print(prompt)
         # print("===============")
         parsed_response = None
         for i in range(self.max_retry):
@@ -61,23 +65,13 @@ class ConversationAgent(BaseAgent):
                 # if self.name == "Code Reviewer":
                 #logger.debug(prompt, "Prompt", Fore.CYAN)
                 response = await self.llm.agenerate_response(prompt)
-                # print("==in agents/simulation_agent/conversation.py, response==")
+                # print("chatgpt response")
                 # print(response)
                 # print("===============")
                 # logging.info(f"{self.name}'s request result:"
                 #              f" {response.content}")
+                
                 parsed_response = self.output_parser.parse(response)
-                
-                
-                
-                print("==in agents/simulation_agent/conversation.py, response==")
-                print(response)
-                print(type(response))
-                print("===============")  
-                print("==in agents/simulation_agent/conversation.py, parsed_response==")
-                print(parsed_response)
-                print(type(parsed_response))
-                print("===============")
                 
                 break
             except (KeyboardInterrupt, bdb.BdbQuit):
@@ -97,36 +91,60 @@ class ConversationAgent(BaseAgent):
             sender=self.name,
             receiver=self.get_receiver(),
         )
-        print("==in agents/simulation_agent/conversation.py, message==")
-        print(message)
-        print(type(message))
-        print("===============")
+        # print("==in agents/simulation_agent/conversation.py, message==")
+        # print(message)
+        # print(type(message))
+        # print("===============")
         return message
 
-    async def astep_local(self, env_description: str = "") -> Message:
-        print("sngwon, astep_local==")
-        """Asynchronous version of step"""
+    #async def astep_local(self, env_description: str = "") -> Message:
+    async def astep_local(self, info_from_env: dict = "") -> Message:
+        env_description=info_from_env["env_description"]
+        nearbyNPCs=info_from_env["nearbyNPCs"]
+        conversation_info=info_from_env["conversation_info"]
+
+
         prompt = self._fill_prompt_template(env_description)
+        action_list=self.action_list
+        #conversation_info={"doing_conversation":True, "to": Birch, "speaker": True, "listener": False}
+        
+        #대화중이면 action=Cnversation, 아니면 action=MoveTo or SomethingAction
+        if conversation_info["doing_conversation"]:            
+            await asyncio.sleep(5)
+            chat_counterpart=conversation_info["to"]
+            if conversation_info["speaker"]:
+                chat_message=f"Hi {chat_counterpart},  I am {self.name}. How are you?"
+                content='{{"to": "{}", "text": "{}", "action": "Conversation", "speaking": "{}"}}'.format(chat_counterpart, chat_message,  True)
+                
+            else:
+                content='{{"to": "{}", "text": "", "action": "Conversation", "speaking": "{}"}}'.format(chat_counterpart, False)
+        else:
+            move_list=['{"to": "Shop", "action": "MoveTo"}', 
+                   '{"to": "Bike Store", "action": "MoveTo"}', 
+                   '{"to": "Park", "action": "MoveTo"}']
+        
+            action_list = [f'{{"last_time": "50 minutes", "action": "{item}"}}' for item in action_list]
+
+            if random.random() < 0.0:    
+                content=pick_one_from_arr(action_list)
+            else:
+                content=pick_one_from_arr(move_list)
+                 
+                   
         
 
-        response = await self.llm.agenerate_response_local(prompt)
-        print("==in agents/simulation_agent/conversation.py, response==")
-        print(response)
-        print("==============")
-        
-        arr=['{"to": "Shop", "action": "MoveTo"}', '{"to": "Bike Store", "action": "MoveTo"}', '{"to": "Park", "action": "MoveTo"}']
-        
-        
-        content_from_local=random.choice(arr)
+        #response = await self.llm.agenerate_response_local(prompt)
+        #parsed_response = self.output_parser.parse_local(response)
+
+   
         message = Message(
-            content=content_from_local,
+            content=content,
             sender=self.name,
             receiver=self.get_receiver(),
         )
-        print("==in agents/simulation_agent/conversation.py, message==")
-        print(message)
-        print(type(message))
-        print("===============")
+        #sngwonprint
+        print(self.name, message)
+        
         return message
 
 

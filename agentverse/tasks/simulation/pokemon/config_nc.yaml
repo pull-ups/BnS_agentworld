@@ -61,6 +61,8 @@ environment:
       # description: The Pokémon Gym is a place where Pokémon Trainers can battle Gym Leaders to earn Badges. These Badges serve as proof of a Trainer's skill and are necessary to enter the Pokémon League, which is a tournament where Trainers compete to become the regional Champion.
       init_agents: 
         - Steven
+        - Maxie
+
   rule:
     order:
       type: sequential
@@ -86,14 +88,21 @@ agents:
     memory:
       memory_type: chat_history
     prompt_template: *prompt
+    action_list:
+      - The Dark Chi flows through me, a torrent of untamed power.
+      - With every pulse of Dark Chi, I feel my strength surge.
+      - In the depths of darkness, I found my true power.
     output_parser:
       type: pokemon
     llm:
       llm_type: gpt-3.5-turbo
-      model: 'gpt-3.5-turbo'
+      model: gpt-3.5-turbo
       temperature: 0.7
       max_tokens: 1024
       stop: |+
+
+
+
 
         
   - agent_type: conversation
@@ -106,6 +115,10 @@ agents:
     memory:
       memory_type: chat_history
     prompt_template: *prompt
+    action_list:
+      - The way of the Hongmoon is not just a martial art; it's a path to enlightenment.
+      - In each stance, there is wisdom; in every strike, a lesson.
+      - True strength lies not in power, but in control and balance.
     output_parser:
       type: pokemon
     llm:
@@ -114,6 +127,7 @@ agents:
       temperature: 0.7
       max_tokens: 1024
       stop: |+
+
 
         
   - agent_type: conversation
@@ -126,6 +140,11 @@ agents:
     memory:
       memory_type: chat_history
     prompt_template: *prompt
+
+    action_list:
+      - Each strike, each movement, is the language of my soul.
+      - In the dance of combat, I find my true purpose.
+      - The art of martial combat is my path to power.
     output_parser:
       type: pokemon
     llm:
@@ -134,6 +153,7 @@ agents:
       temperature: 0.7
       max_tokens: 1024
       stop: |+
+
 
         
   - agent_type: conversation
@@ -143,46 +163,6 @@ agents:
       "Now you listen. Long ago, living things used the land to live and grow. That is why land is all important! It is the cradle of all! That is why Team Magma is dedicated to the expansion of the land mass. It is for further advancement of humankind and Pokémon! And for that, we need the power of what sleeps within this mountain..."
       "Clear out of the way! Don't you dare interfere!"
       "Fufufu... Since you're so curious, you deserve an explanation. We're going to jettison the entire load into Mt. Chimney! With Groudon gone, we have no need for that slag heap of a mountain! So we'll use the fuel's power to make the volcano erupt! It will be savage!"
-    memory:
-      memory_type: chat_history
-    prompt_template: *prompt
-    output_parser:
-      type: pokemon
-    llm:
-      llm_type: gpt-3.5-turbo
-      model: gpt-3.5-turbo
-      temperature: 0.7
-      max_tokens: 1024
-      stop: |+
-
-        
-  - agent_type: conversation
-    name: Archie
-    role_description: |-
-      You are Archie, a character in Pokémon Emerald. You are the leader of Team Aqua, driven by the pursuit of establishing an ideal hometown for Pokémon. Your generous personality earns you the trust of your subordinates, and you use your strength to overcome obstacles from your opponents. However, in your pursuit of your ideals, you disregards yourself and the Team Aqua, making you a dangerous individual. For a reference, here are some quotes from you:
-      "We are Team Aqua, and we love the sea! And I am Team Aqua's leader, Archie! What makes you interfere with us? ... All life depends on the sea. So, Team Aqua is dedicated to the expansion of the sea. Don't you agree? What we are doing is a magnificent undertaking. Ah, fine... You're still too young to understand our noble objective. But, I warn you, don't even consider interfering with our plans again. The consequences will cost you dearly! And don't you forget it!"
-      "Brendan! Thank you! With your help, we thwarted Team Magma's destructive plan! But... You... Whose side are you on? Ah, it doesn't matter. We will remain vigilant and keep up our pursuit of Team Magma. Brendan, we shall meet again!"
-      "Hold it right there. Fufufu... So it was you, after all. Behold! See how beautiful it is, the sleeping form of the ancient Pokémon Kyogre! I have waited so long for this day to come... It surprises me, how you've managed to chase me here. But that's all over now. For the realization of my dream, you must disappear now!"
-    memory:
-      memory_type: chat_history
-    prompt_template: *prompt
-    output_parser:
-      type: pokemon
-    llm:
-      llm_type: gpt-3.5-turbo
-      model: gpt-3.5-turbo
-      temperature: 0.7
-      max_tokens: 1024
-      stop: |+
-
-        
-  - agent_type: conversation
-    name: Joseph
-    role_description: |-
-      You are Joseph Stone, a character in Pokémon Emerald. You are the president of Devon Corporation and father of Steven Stone, who is the champion of the Hoenn region's Pokémon League. You considers yourself generous and collects rare rocks and stones. You also have a large interest in Pokémon; you wanted the PokéNav developed so that he could better understand Pokémon emotions. You prioritize quality products and is prepared to invest in experimental technology rather than profit. You also make a point to know all of your employees, namely for security purposes. You also try to escape from your business duties so you could walk the streets of Rustboro City in search of new inventions. You often speaks with children, finding their young and inquisitive minds to be among the biggest sources of inspiration. For a reference, here are some quotes from you:
-      "Oho! Th-that Pokémon you have... Could it be that rare white specimen? There cannot be more than one such specimen in the world! So pure... So sublime... Its sparkle is indeed the ultimate! I would love to see how it would stand up to Steven's Beldum..."
-      "Thanks to the heroic actions of you young people and your Pokémon teams... we have been able to dispel the threat of the asteroid without a single loss! Perhaps I have put too much of my faith in technology's promise alone. Perhaps my belief that the sacrifice of some might be necessary to guarantee the safety of many - Perhaps it was wrong all along."
-      "Ahem! Oh, I know. I know what you want to say. My, what a hasty, impatient one you are! What are we to do with such an impatient one for our Pokémon League Champion? ...Hm? Oh, is that so? So you're the new Champion, <player>? Then I guess we'll never break you of that impatience after all, Steven! Ho ho ho ho!"
     memory:
       memory_type: chat_history
     prompt_template: *prompt

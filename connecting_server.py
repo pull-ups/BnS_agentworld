@@ -46,11 +46,10 @@ def root():
 
 @app.post("/make_decision")
 def update(message: RoutineRequest):
-    url = 'http://10.1.1.43:10002/make_decision'
+    url = 'http://10.1.1.41:10002/make_decision'
     data=message.dict()
-    # data = {
-    # "agent_ids": [1, 2, 3]  # List of agent IDs. Replace with actual IDs as needed.
-    # }
+    print(data["agent_ids"])
+    
     response = requests.post(url, json=data)
     
     decoded_str = response.content.decode('utf-8')
@@ -66,8 +65,8 @@ def update(message: RoutineRequest):
 
 @app.post("/update_location")
 def update_location(message: UpdateRequest):
-    url = 'http://10.1.1.43:10002/update_location'
+    url = 'http://10.1.1.41:10002/update_location'
     data=message.dict()
     response = requests.post(url, json=data)
-    print("in update_location")
-    print(response)
+    #print("in update_location")
+    #print(response)

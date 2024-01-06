@@ -1,0 +1,63 @@
+INFO:     Will watch for changes in these directories: ['/home/sngwon/workspace/AgentVerse']
+INFO:     Uvicorn running on http://10.1.1.41:10002 (Press CTRL+C to quit)
+INFO:     Started reloader process [352857] using StatReload
+WARNING:  StatReload detected changes in 'agentverse/environments/simulation_env/pokemon.py'. Reloading...
+INFO:     Started server process [352997]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+/home/sngwon/workspace/AgentVerse/agentverse/agents/simulation_agent/conversation.py:112: RuntimeWarning: coroutine 'sleep' was never awaited
+  asyncio.sleep(10)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+ [0m BMTools is not installed, tools in the simulation environment cannot be used. To install BMTools, please follow the instruction in the README.md file. If you aren't running a *simulation* case with tool, you can ignore this warning.
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': True, 'to': 'Maxie', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'Steven', 'speaker': False, 'listener': True}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Birch content='{"to": "May", "text": "", "action": "Listen"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Maxie", "text": "Hi Maxie,  I am Steven. How are you?", "action": "Speak"}' sender='Steven' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Steven", "text": "", "action": "Listen"}' sender='Maxie' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "May", "text": "", "action": "Listen"}
+ [0m Steven: {"to": "Maxie", "text": "Hi Maxie,  I am Steven. How are you?", "action": "Speak"}
+ [0m Maxie: {"to": "Steven", "text": "", "action": "Listen"}
+INFO:     10.1.1.109:59626 - "POST /make_decision HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Park", "action": "MoveTo"}' sender='Steven' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Steven: {"to": "Park", "action": "MoveTo"}
+INFO:     10.1.1.109:59652 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:59672 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Steven', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'May', 'Steven', 'Birch'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:59710 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:59714 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [352997]
+INFO:     Stopping reloader process [352857]

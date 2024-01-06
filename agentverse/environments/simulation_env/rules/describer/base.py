@@ -18,6 +18,11 @@ class BaseDescriber(BaseModel):
     ) -> List[str]:
         """Return the environment description for each agent"""
         pass
+    def get_nearbyNPCs(
+        self,
+        environment: BaseEnvironment, *args, **kwargs
+    ) -> List[str]:
+        pass
 
     def reset(self) -> None:
         pass

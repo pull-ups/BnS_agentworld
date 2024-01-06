@@ -22,6 +22,8 @@ class BaseAgent(BaseModel):
     append_prompt_template: str = Field(default="")
     prompt_template: str = Field(default="")
     role_description: str = Field(default="")
+    #sngwon
+    action_list: List[str] = Field(default_factory=list)
     memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
     memory_manipulator: BaseMemoryManipulator = Field(
         default_factory=BaseMemoryManipulator
@@ -37,9 +39,7 @@ class BaseAgent(BaseModel):
 
     @abstractmethod
     def astep(self, prompt: str = "") -> Message:
-        print("==in agents/base.py, astep==")
-        print("prompt: ", prompt)
-        print("====")
+
         """Asynchronous version of step"""
         pass
 

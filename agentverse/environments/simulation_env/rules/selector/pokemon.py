@@ -25,6 +25,8 @@ class PokemonSelector(BaseSelector):
         valid = []
         talk_matrix = np.zeros((len(environment.agents), len(environment.agents)))
         agent_to_idx = {agent.name: i for i, agent in enumerate(environment.agents)}
+        
+        
         for i, message in enumerate(messages):
             try:
                 content = json.loads(message.content)
@@ -95,4 +97,5 @@ class PokemonSelector(BaseSelector):
                     selected_messages.append(message)
             else:
                 selected_messages.append(message)
+        #import pdb; pdb.set_trace()
         return selected_messages

@@ -15,6 +15,8 @@ export class NPC extends Actor {
   private board: Board;
   private canMove: boolean = true;
   private talkWithPlayer: boolean = false;
+  private doingtask: boolean = false;
+  private curtaskendtime: number = 0;
   private path: PathFinder.NodeType[] = [];
   private finalDirection: number = undefined;
   private targetLocation: string = undefined;
@@ -69,7 +71,6 @@ export class NPC extends Actor {
           this.changeDirection(this.finalDirection);
           this.emitTurnEvent();
           if (this.targetLocation != undefined) {
-            //fetch("http://10.1.1.151:10002/update_location", {
             fetch("http://127.0.0.1:10003/update_location", {
               method: "POST",
               headers: {
@@ -179,7 +180,7 @@ export class NPC extends Actor {
         ),
         text: scene.rexUI.wrapExpandText(
           scene.add.text(0, 0, text, {
-            fontSize: 10,
+            fontSize: 20,
           })
         ),
         expandTextWidth: true,
@@ -236,6 +237,9 @@ export class NPC extends Actor {
   public isTalking(): boolean {
     return this.talkWithPlayer;
   }
+  public isDoingtask(): boolean {
+    return this.doingtask;
+  }
 
   public setTalking(talking: boolean): void {
     this.talkWithPlayer = talking;
@@ -244,4 +248,18 @@ export class NPC extends Actor {
   public setTargetNPC(targetNPC: NPC = undefined): void {
     this.targetNPC = targetNPC;
   }
+
+
+  public setdoingtask(curtime: number): void {
+    const temp=this.doingtask;
+    this.doingtask = curtime < this.curtaskendtime;
+    if (this.doingtask != temp){
+      console.log(this.name + " is doing task: " + this.doingtask);
+    }  
+  }
+  public setcurtaskendtime(curtaskendtime: number): void {
+    this.curtaskendtime = curtaskendtime;
+  }
+
+
 }

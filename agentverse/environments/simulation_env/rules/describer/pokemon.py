@@ -49,3 +49,26 @@ class PokemonDescriber(BaseDescriber):
             description += f"It is now {time}. Brendan is talking to you.\n"
             description += f"[Brendan]: {player_content}\n"
             return [description for _ in range(len(environment.agents))]
+    
+    def get_nearbyNPCs(
+        self,
+        environment: PokemonEnvironment,
+    ) -> List[str]:
+        agent_to_idx = {agent.name: i for i, agent in enumerate(environment.agents)}
+        agent_to_location = environment.get_agent_to_location()
+        agents_in_same_loc_arr=[]
+        for agent in environment.agents:
+            agents_in_same_loc = []
+            if agent.name not in agent_to_location:
+                # Agent is on the way to a location
+                agents_in_same_loc_arr.append([])
+                continue
+            location = agent_to_location[agent.name]
+            agents_in_same_loc = deepcopy(environment.locations_to_agents[location])
+            agents_in_same_loc.remove(agent.name)
+            agents_in_same_loc = list(agents_in_same_loc)
+            
+            agents_in_same_loc_arr.append(agents_in_same_loc)
+            #agents_in_same_loc_arr.append([agent_to_idx[i] for i in agents_in_same_loc])
+        return agents_in_same_loc_arr
+                    

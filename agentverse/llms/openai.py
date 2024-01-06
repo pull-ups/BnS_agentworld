@@ -17,6 +17,12 @@ from . import llm_registry, LOCAL_LLMS
 from .base import BaseChatModel, BaseCompletionModel, BaseModelArgs
 from .utils.jsonrepair import JsonRepair
 
+import os
+
+# Set the environment variable
+os.environ['OPENAI_API_KEY'] = "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"
+
+
 try:
     import openai
     from openai.error import OpenAIError
@@ -220,9 +226,7 @@ class OpenAIChat(BaseChatModel):
                         functions=functions,
                         **self.args.dict(),
                     )
-                    # print("==in llms/openai response==")
-                    # print(response)
-                    # print("=============")
+
                 if response["choices"][0]["message"].get("function_call") is not None:
                     function_name = response["choices"][0]["message"]["function_call"][
                         "name"
@@ -290,6 +294,8 @@ class OpenAIChat(BaseChatModel):
                         messages=messages,
                         **self.args.dict(),
                     )
+                    # print("==in llms/openai response==")
+                    # print(response)
                 self.collect_metrics(response)
                 return LLMResult(
                     content=response["choices"][0]["message"]["content"],

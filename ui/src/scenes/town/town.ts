@@ -16,6 +16,8 @@ import { COLOR_DARK, COLOR_LIGHT, COLOR_PRIMARY } from "../../constants";
 
 export class TownScene extends Scene {
   private timeFrame: number = 0;
+  private totaltime: number = 0;
+
   private isQuerying: boolean = false;
 
   private map: Tilemaps.Tilemap;
@@ -49,12 +51,20 @@ export class TownScene extends Scene {
   }
 
   update(time, delta): void {
+    
     this.timeFrame += delta;
-    this.player.update();
+    this.totaltime += delta;
+    const currentTime = this.totaltime;
 
+    this.player.update();
+    this.npcGroup.getChildren().forEach(function (npc) {
+      (npc as NPC).setdoingtask(currentTime);
+    });
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).update();
     });
+
+
     // if (this.timeFrame > 5000) {
     if (this.timeFrame > 10000) {
       if (!this.isQuerying) {
@@ -66,12 +76,19 @@ export class TownScene extends Scene {
           // for (let i = 0; i < 1; i++) {
           if (
             !(allNpcs[i] as NPC).isMoving() &&
-            !(allNpcs[i] as NPC).isTalking()
+            !(allNpcs[i] as NPC).isTalking() &&
+            !(allNpcs[i] as NPC).isDoingtask()
           ) {
             shouldUpdate.push(i);
           }
+          else{
+            console.log((allNpcs[i] as NPC).name);
+            console.log("is moving", (allNpcs[i] as NPC).isMoving());
+            console.log("is talking", (allNpcs[i] as NPC).isTalking());
+            console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
+
+          }
         }
-        //fetch("http://10.1.1.151:10002/make_decision", {
         fetch("http://127.0.0.1:10003/make_decision", {
           method: "POST",
           headers: {
@@ -83,9 +100,9 @@ export class TownScene extends Scene {
           }),
         }).then((response) => {
           response.json().then((data) => {
-            this.npcGroup.getChildren().forEach(function (npc) {
-              (npc as NPC).destroyTextBox();
-            });
+            // this.npcGroup.getChildren().forEach(function (npc) {
+            //   (npc as NPC).destroyTextBox();
+            // });
             for (let i = 0; i < data.length; i++) {
               var npc = allNpcs[shouldUpdate[i]] as NPC;
               if (data[i].content == "") continue;
@@ -97,6 +114,8 @@ export class TownScene extends Scene {
                   npc.destroyTextBox();
                   this.moveNPC(shouldUpdate[i], tile, undefined, content.to);
                   break;
+
+
                 case "Speak":
                   var ret = this.getNPCNeighbor(content.to);
                   var tile = ret[0];
@@ -112,7 +131,23 @@ export class TownScene extends Scene {
                   );
                   npc.setTextBox(content.text);
                   break;
+
+
+                case "Conversation":
+                  //May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Conversation", "speaking": "True"}
+                  //Steven: {"to": "May", "text": "", "action": "Conversation", "speaking": "False"}
+                  if (content.speaking=="True"){
+                    npc.setTextBox(content.text);
+                  }
+                  else{
+                    npc.setTextBox("Listening...");
+                  }
+                  break;
+
+
                 default:
+                  var temp_time=30000;
+                  npc.setcurtaskendtime(this.totaltime+temp_time);
                   npc.setTextBox("[" + content.action + "]");
                   break;
               }
@@ -369,7 +404,6 @@ export class TownScene extends Scene {
       },
       loop: true,
     });
-    //fetch("http://10.1.1.151:10002/chat", {
     fetch("http://127.0.0.1:10003/chat", {
       method: "POST",
       headers: {

@@ -1,0 +1,354 @@
+INFO:     Will watch for changes in these directories: ['/home/sngwon/workspace/AgentVerse']
+INFO:     Uvicorn running on http://10.1.1.41:10002 (Press CTRL+C to quit)
+INFO:     Started reloader process [353423] using StatReload
+INFO:     Started server process [353425]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+/home/sngwon/workspace/AgentVerse/agentverse/agents/simulation_agent/conversation.py:112: RuntimeWarning: coroutine 'sleep' was never awaited
+  asyncio.sleep(5)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+ [0m BMTools is not installed, tools in the simulation environment cannot be used. To install BMTools, please follow the instruction in the README.md file. If you aren't running a *simulation* case with tool, you can ignore this warning.
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+sngwon, llm openai init
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': True, 'to': 'Maxie', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'Steven', 'speaker': False, 'listener': True}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Birch content='{"to": "May", "text": "", "action": "Listen"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Maxie", "text": "Hi Maxie,  I am Steven. How are you?", "action": "Speak"}' sender='Steven' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Steven", "text": "", "action": "Listen"}' sender='Maxie' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "May", "text": "", "action": "Listen"}
+ [0m Steven: {"to": "Maxie", "text": "Hi Maxie,  I am Steven. How are you?", "action": "Speak"}
+ [0m Maxie: {"to": "Steven", "text": "", "action": "Listen"}
+INFO:     10.1.1.109:59980 - "POST /make_decision HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60002 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60046 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Park", "action": "MoveTo"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Park", "action": "MoveTo"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Park", "action": "MoveTo"}
+ [0m Steven: {"to": "Park", "action": "MoveTo"}
+INFO:     10.1.1.109:60058 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60062 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60072 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Park", "action": "MoveTo"}' sender='May' receiver={'Steven', 'Birch', 'May'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'Steven', 'Birch', 'May'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Park", "action": "MoveTo"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60086 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60092 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60104 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Birch content='{"to": "May", "text": "", "action": "Listen"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Bike Store", "action": "MoveTo"}' sender='Maxie' receiver={'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "May", "text": "", "action": "Listen"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Maxie: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60118 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60120 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60138 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Bike Store", "action": "MoveTo"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Park", "action": "MoveTo"}' sender='Steven' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Bike Store", "action": "MoveTo"}' sender='Maxie' receiver={'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Steven: {"to": "Park", "action": "MoveTo"}
+ [0m Maxie: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60148 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60150 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60170 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60180 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': True, 'to': 'Steven', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'Birch', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+May content='{"to": "Bike Store", "action": "MoveTo"}' sender='May' receiver={'May', 'Maxie'} sender_agent=None tool_response=[]
+Steven content='{"to": "Birch", "text": "", "action": "Listen"}' sender='Steven' receiver={'Steven', 'Birch'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Shop", "action": "MoveTo"}' sender='Maxie' receiver={'May', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Steven: {"to": "Birch", "text": "", "action": "Listen"}
+ [0m Maxie: {"to": "Shop", "action": "MoveTo"}
+INFO:     10.1.1.109:60210 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60214 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60224 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Park", "action": "MoveTo"}' sender='May' receiver={'May'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Park", "action": "MoveTo"}' sender='Maxie' receiver={'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Park", "action": "MoveTo"}
+ [0m Maxie: {"to": "Park", "action": "MoveTo"}
+INFO:     10.1.1.109:60240 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60252 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60260 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': True, 'to': 'Maxie', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'Steven', 'speaker': False, 'listener': True}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Birch content='{"to": "May", "text": "", "action": "Listen"}' sender='Birch' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Steven", "text": "", "action": "Listen"}' sender='Maxie' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "May", "text": "", "action": "Listen"}
+ [0m Maxie: {"to": "Steven", "text": "", "action": "Listen"}
+INFO:     10.1.1.109:60272 - "POST /make_decision HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0]
+conversation_infos
+{'doing_conversation': True, 'to': 'Steven', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'Maxie', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': True, 'to': 'Birch', 'speaker': False, 'listener': True}
+May content='{"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}
+INFO:     10.1.1.109:60292 - "POST /make_decision HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2]
+conversation_infos
+{'doing_conversation': True, 'to': 'Steven', 'speaker': True, 'listener': False}
+{'doing_conversation': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+May content='{"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Steven content='{"to": "May", "text": "", "action": "Listen"}' sender='Steven' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}
+ [0m Steven: {"to": "May", "text": "", "action": "Listen"}
+INFO:     10.1.1.109:60316 - "POST /make_decision HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': True, 'to': 'Maxie', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'Steven', 'speaker': False, 'listener': True}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+INFO:     10.1.1.109:60336 - "POST /make_decision HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Steven', 'speaker': True, 'listener': False}
+{'doing_conversation': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+May content='{"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Birch content='{"to": "Shop", "action": "MoveTo"}' sender='Birch' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Park", "action": "MoveTo"}' sender='Maxie' receiver={'May', 'Birch', 'Steven', 'Maxie'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "Shop", "action": "MoveTo"}
+ [0m Maxie: {"to": "Park", "action": "MoveTo"}
+INFO:     10.1.1.109:60352 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60366 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Steven', 'speaker': True, 'listener': False}
+{'doing_conversation': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+May content='{"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+Birch content='{"to": "Shop", "action": "MoveTo"}' sender='Birch' receiver={'Birch'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Bike Store", "action": "MoveTo"}' sender='Maxie' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "Shop", "action": "MoveTo"}
+ [0m Maxie: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60378 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60382 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Bike Store", "action": "MoveTo"}' sender='May' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+Birch content='{"to": "Bike Store", "action": "MoveTo"}' sender='Birch' receiver={'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Park", "action": "MoveTo"}' sender='Steven' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Bike Store", "action": "MoveTo"}' sender='Maxie' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Birch: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Steven: {"to": "Park", "action": "MoveTo"}
+ [0m Maxie: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60400 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60416 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60434 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60436 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Shop", "action": "MoveTo"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Birch content='{"to": "Bike Store", "action": "MoveTo"}' sender='Birch' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Shop", "action": "MoveTo"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Shop", "action": "MoveTo"}' sender='Maxie' receiver={'Steven'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Shop", "action": "MoveTo"}
+ [0m Birch: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Steven: {"to": "Shop", "action": "MoveTo"}
+ [0m Maxie: {"to": "Shop", "action": "MoveTo"}
+INFO:     10.1.1.109:60464 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60472 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60484 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60486 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Shop", "action": "MoveTo"}' sender='May' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+Birch content='{"to": "Park", "action": "MoveTo"}' sender='Birch' receiver={'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'May', 'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Bike Store", "action": "MoveTo"}' sender='Maxie' receiver=set() sender_agent=None tool_response=[]
+ [0m May: {"to": "Shop", "action": "MoveTo"}
+ [0m Birch: {"to": "Park", "action": "MoveTo"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Maxie: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60496 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60500 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60504 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60510 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Bike Store", "action": "MoveTo"}' sender='May' receiver={'May'} sender_agent=None tool_response=[]
+Birch content='{"to": "Bike Store", "action": "MoveTo"}' sender='Birch' receiver={'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Bike Store", "action": "MoveTo"}' sender='Maxie' receiver={'Birch'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Birch: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Maxie: {"to": "Bike Store", "action": "MoveTo"}
+INFO:     10.1.1.109:60522 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60524 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60528 - "POST /update_location HTTP/1.1" 200 OK
+INFO:     10.1.1.109:60534 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 1, 2, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch', 'Steven'} sender_agent=None tool_response=[]
+Birch content='{"to": "May", "text": "", "action": "Listen"}' sender='Birch' receiver={'May', 'Birch', 'Steven'} sender_agent=None tool_response=[]
+Steven content='{"to": "Park", "action": "MoveTo"}' sender='Steven' receiver={'May', 'Birch', 'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Shop", "action": "MoveTo"}' sender='Maxie' receiver=set() sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Birch: {"to": "May", "text": "", "action": "Listen"}
+ [0m Steven: {"to": "Park", "action": "MoveTo"}
+ [0m Maxie: {"to": "Shop", "action": "MoveTo"}
+INFO:     10.1.1.109:60544 - "POST /make_decision HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "/home/sngwon/anaconda3/envs/agentverse/bin/uvicorn", line 8, in <module>
+    sys.exit(main())
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/uvicorn/main.py", line 416, in main
+    run(
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/uvicorn/main.py", line 582, in run
+    ChangeReload(config, target=server.run, sockets=[sock]).run()
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/uvicorn/supervisors/basereload.py", line 50, in run
+    for changes in self:
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/uvicorn/supervisors/basereload.py", line 69, in __next__
+    return self.should_restart()
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/uvicorn/supervisors/statreload.py", line 32, in should_restart
+    for file in self.iter_py_files():
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/site-packages/uvicorn/supervisors/statreload.py", line 52, in iter_py_files
+    for path in list(reload_dir.rglob("*.py")):
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/pathlib.py", line 1190, in rglob
+    for p in selector.select_from(self):
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/pathlib.py", line 611, in _select_from
+    for p in successor_select(starting_point, is_dir, exists, scandir):
+  File "/home/sngwon/anaconda3/envs/agentverse/lib/python3.9/pathlib.py", line 558, in _select_from
+    with scandir(parent_path) as scandir_it:
+FileNotFoundError: [Errno 2] No such file or directory: '/home/sngwon/workspace/AgentVerse/ui/node_modules/@esbuild/linux-ia32'
+INFO:     10.1.1.109:60554 - "POST /update_location HTTP/1.1" 200 OK
+in sngwon, make_decision
+agent_ids=[0, 2, 3]
+conversation_infos
+{'doing_conversation': True, 'to': 'Birch', 'speaker': True, 'listener': False}
+{'doing_conversation': True, 'to': 'May', 'speaker': False, 'listener': True}
+{'doing_conversation': False}
+{'doing_conversation': False}
+May content='{"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}' sender='May' receiver={'May', 'Birch'} sender_agent=None tool_response=[]
+Steven content='{"to": "Bike Store", "action": "MoveTo"}' sender='Steven' receiver={'Steven'} sender_agent=None tool_response=[]
+Maxie content='{"to": "Shop", "action": "MoveTo"}' sender='Maxie' receiver={'Steven'} sender_agent=None tool_response=[]
+ [0m May: {"to": "Birch", "text": "Hi Birch,  I am May. How are you?", "action": "Speak"}
+ [0m Steven: {"to": "Bike Store", "action": "MoveTo"}
+ [0m Maxie: {"to": "Shop", "action": "MoveTo"}
+INFO:     10.1.1.109:60598 - "POST /make_decision HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [353425]
