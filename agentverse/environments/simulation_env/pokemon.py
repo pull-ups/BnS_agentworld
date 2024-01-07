@@ -238,22 +238,25 @@ class PokemonEnvironment(BaseEnvironment):
                     print("Invalid speaking value")
 
         #2. 지금 대화를 시작하는 애들 정보 업데이트
-        for agent_idx in range(len(self.agents)):
-            #conversation pair에 대해
-            for conversation_pair in conversation_start_agent_ids_pair:
-                dialog_turn=random.randint(2,4)
-                counterpart_idx=switch_values(agent_idx, conversation_pair)
-                if agent_idx in conversation_pair:
-                    conversation_infos[agent_idx]["doing_conversation"]=True
-                    conversation_infos[agent_idx]["to"]=self.agents[counterpart_idx].name
-                    
-                    if agent_idx < counterpart_idx:
-                        #자기가 번호가 낮으면 speaker
-                        conversation_infos[agent_idx]["speaker"]=True
-                        conversation_infos[agent_idx]["listener"]=False
-                    else:
-                        conversation_infos[agent_idx]["speaker"]=False
-                        conversation_infos[agent_idx]["listener"]=True
+            
+        
+        for conversation_pair in conversation_start_agent_ids_pair:
+            #대화 턴 설정!!
+            dialog_turn=random.randint(4,6)
+            
+            
+            counterpart_idx=switch_values(agent_idx, conversation_pair)
+            if agent_idx in conversation_pair:
+                conversation_infos[agent_idx]["doing_conversation"]=True
+                conversation_infos[agent_idx]["to"]=self.agents[counterpart_idx].name
+                conversation_infos[agent_idx]["conversation_turn_last"]=dialog_turn
+                if agent_idx < counterpart_idx:
+                    #자기가 번호가 낮으면 speaker
+                    conversation_infos[agent_idx]["speaker"]=True
+                    conversation_infos[agent_idx]["listener"]=False
+                else:
+                    conversation_infos[agent_idx]["speaker"]=False
+                    conversation_infos[agent_idx]["listener"]=True
 
 
 

@@ -24,7 +24,8 @@ def pick_one_from_arr(arr):
         
 @agent_registry.register("conversation")
 class ConversationAgent(BaseAgent):
-    
+    doing_conversation=False
+    conversation_turn_last=0
     def step(self, env_description: str = "") -> Message:
         prompt = self._fill_prompt_template(env_description)
 
@@ -109,7 +110,12 @@ class ConversationAgent(BaseAgent):
         #conversation_info={"doing_conversation":True, "to": Birch, "speaker": True, "listener": False}
         
         #대화중이면 action=Cnversation, 아니면 action=MoveTo or SomethingAction
-        if conversation_info["doing_conversation"]:            
+        if conversation_info["doing_conversation"]:
+            #대화 남은 턴 처리
+            self.doing_conversation=True
+            self.conversation_turn_last=conversation_info['conversation_turn_last']
+            
+            
             await asyncio.sleep(5)
             chat_counterpart=conversation_info["to"]
             if conversation_info["speaker"]:
