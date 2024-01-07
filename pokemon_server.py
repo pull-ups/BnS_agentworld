@@ -36,6 +36,10 @@ class RoutineRequest(BaseModel):
 class UpdateRequest(BaseModel):
     agent_locations: Dict[str, str]
 
+class ReactionRequest(BaseModel):
+    agent_ids: List[int]
+    situation: str
+
 app = FastAPI()
 
 app.add_middleware(
@@ -95,6 +99,7 @@ def chat(message: UserRequest):
         player_content=content,
         receiver=receiver,
         receiver_id=receiver_id,
+        llm="local"
     )
 
     
@@ -111,6 +116,15 @@ def update(message: RoutineRequest):
 
     #print([r.dict() for r in response])
     return [r.dict() for r in response]
+
+
+@app.post("/reaction")
+def reaction(message: ReactionRequest):
+    return {"message": "Update location complete"}
+
+
+
+
 
 
 

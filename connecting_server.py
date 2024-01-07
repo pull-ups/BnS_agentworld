@@ -38,7 +38,9 @@ class RoutineRequest(BaseModel):
 class UpdateRequest(BaseModel):
     agent_locations: Dict[str, str]
 
-
+class ReactionRequest(BaseModel):
+    agent_ids: List[int]
+    situation: str
 
 @app.get("/")
 def root():
@@ -51,10 +53,6 @@ def root():
 def chat(message: UserRequest):
     url = 'http://10.1.1.41:10002/chat'
     data=message.dict()
-    
-    #content = message.content
-    #receiver = message.receiver
-    #receiver_id = message.receiver_id
     response = requests.post(url, json=data)
     
     decoded_str = response.content.decode('utf-8')
@@ -81,6 +79,20 @@ def update(message: RoutineRequest):
     # Converting 'receiver' lists to sets
     for item in data:
         item['receiver'] = set(item['receiver'])
+    return data
+
+
+@app.post("/reaction")
+def reaction(message: ReactionRequest):
+    url = 'http://10.1.1.41:10002/reaction'
+    data=message.dict()
+    response = requests.post(url, json=data)
+    
+    decoded_str = response.content.decode('utf-8')
+
+    data = json.loads(decoded_str)
+
+
     return data
 
 

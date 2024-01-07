@@ -1,13 +1,15 @@
 import { Actor } from "./actor";
+import { Player } from "./player";
 import { DIRECTION } from "../utils";
 import {
   MoveTo,
   PathFinder,
   Board,
 } from "../phaser3-rex-plugins/plugins/board-components";
-import { Label } from "../phaser3-rex-plugins/templates/ui/ui-components";
+import { Label, TextArea } from "../phaser3-rex-plugins/templates/ui/ui-components";
 import { COLOR_DARK, COLOR_LIGHT, COLOR_PRIMARY } from "../constants";
 import { TownScene } from "../scenes";
+
 import eventsCenter from "./event_center";
 
 export class NPC extends Actor {
@@ -17,13 +19,15 @@ export class NPC extends Actor {
   private talkWithPlayer: boolean = false;
   private doingtask: boolean = false;
   private dialoghistory: string[] = [];
+  private dialoghistory_string: string = "";
   private curtaskendtime: number = 0;
   private path: PathFinder.NodeType[] = [];
   private finalDirection: number = undefined;
   private targetLocation: string = undefined;
   private targetNPC: NPC = undefined;
   private textBox: Label = undefined;
-
+  //private chatBox: TextArea = undefined;
+  private chatBox: Label = undefined;
   public id: number;
   public direction: number = DIRECTION.DOWN;
 
@@ -108,6 +112,7 @@ export class NPC extends Actor {
     if (this.anims.isPlaying && !this.moveTo.isRunning)
       this.anims.setCurrentFrame(this.anims.currentAnim!.frames[0]);
     this.updateTextBox();
+    this.updateChatBox();
     this.depth = this.y + this.height * 0.8;
   }
 
@@ -159,8 +164,12 @@ export class NPC extends Actor {
       child.setDepth(this.y + this.height * 0.8);
     });
   }
+  updateChatBox(): void {
+    if (this.chatBox == undefined) return;
+   
+  }
 
-  public setTextBox(text: string): void {
+  public setTextBox(text: string, player: Player): void {
     this.destroyTextBox();
     var scale = this.scene.cameras.main.zoom;
     var scene = this.scene as TownScene;
@@ -196,13 +205,88 @@ export class NPC extends Actor {
       .setScale(1 / scale, 1 / scale)
       .setDepth(this.y + this.height * 0.8)
       .layout();
+    this.textBox.setInteractive();
+
+    // Register the click event handler
+    this.textBox.on('pointerdown', () => this.setChatbox(player));
   }
 
+  private setChatbox(player: Player): void {
+    var dialoghistory_string=this.getdialoghistorystring();
+    var scale = this.scene.cameras.main.zoom;
+    var scene = this.scene as TownScene;
+    var camera_height = this.scene.cameras.main.height;
+    this.chatBox = scene.rexUI.add
+      .label({
+        x: player.x + this.width / 2,
+        y: player.y - this.height * 0.6 + camera_height * 0.1,
+        width: 48 * scale * 6,
+        height: 48 * scale * 3,
+        orientation: "x",
+        background: scene.rexUI.add.roundRectangle(
+          0,
+          0,
+          2,
+          2,
+          20,
+          COLOR_DARK,
+          1
+        ),
+        text: scene.rexUI.wrapExpandText(
+          scene.add.text(0, 0, dialoghistory_string, {
+            fontSize: 20,
+          })
+        ),
+        expandTextWidth: true,
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+        },
+      })
+      .setOrigin(0.5, 1.0)
+      .setScale(1 / scale, 1 / scale)
+      .setDepth(this.y + this.height * 0.8+1)
+      .layout();
 
-  
+    var submitBtn = scene.rexUI.add
+    .label({
+      x: player.x,
+      y: player.y+50,
+      background: scene.rexUI.add
+        .roundRectangle(0, 0, 2, 2, 20, COLOR_LIGHT)
+        .setStrokeStyle(2, COLOR_LIGHT),
+      text: scene.add.text(0, 0, "Close"),
+      space: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 10,
+      },
+      })
+      .setOrigin(0)
+      .setScale(1 / scale, 1 / scale)
+      .setDepth(this.y + this.height * 0.8 + 2)
+      .layout();
+    submitBtn.setInteractive();
+    submitBtn.on('pointerdown', () => {
+      submitBtn.destroy();
+      this.destroyChatBox()
+    });
+
+
+  }
   public destroyTextBox(): void {
     if (this.textBox != undefined) this.textBox.destroy();
     this.textBox = undefined;
+  }
+  public destroyChatBox(): void {
+    if (this.chatBox != undefined) {
+      this.chatBox.destroy();
+    }
+    this.chatBox = undefined;
+    console.log("destroy chatbox");
   }
 
   public changeDirection(direction: number): void {
@@ -265,12 +349,18 @@ export class NPC extends Actor {
   }
   public adddialoghistory(dialog: string): void {
     this.dialoghistory.push(dialog);
+    this.dialoghistory_string += dialog + "\n";
   }
   public getdialoghistory(): string[] {
     return this.dialoghistory;
   }
+  public getdialoghistorystring(): string {
+    return this.dialoghistory_string;
+  }
+  
   public emptydialoghistory(): void {
     this.dialoghistory = [];
+    this.dialoghistory_string="";
   }
 
 }

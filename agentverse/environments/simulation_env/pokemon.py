@@ -250,7 +250,7 @@ class PokemonEnvironment(BaseEnvironment):
         #2. 지금 대화를 시작하는 애들 정보 업데이트
         for conversation_pair in conversation_start_agent_ids_pair:
             #대화 턴 설정!!
-            dialog_turn=random.randint(2,3)
+            dialog_turn=random.randint(3,4)
             for agent_idx in conversation_pair:
                 counterpart_idx=switch_values(agent_idx, conversation_pair)
                 if agent_idx in conversation_pair:

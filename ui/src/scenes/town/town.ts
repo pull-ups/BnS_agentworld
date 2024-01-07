@@ -32,6 +32,8 @@ export class TownScene extends Scene {
   private npcGroup: GameObjects.Group;
   private keySpace: Phaser.Input.Keyboard.Key;
   private keyEnter: Phaser.Input.Keyboard.Key;
+  private keyK: Phaser.Input.Keyboard.Key;
+
   public rexUI: UIPlugin;
   public rexBoard: BoardPlugin;
   private board: BoardPlugin.Board;
@@ -42,6 +44,8 @@ export class TownScene extends Scene {
   }
 
   create(): void {
+    this.keyK = this.input.keyboard.addKey("K");
+
     this.keySpace = this.input.keyboard!.addKey("SPACE");
     this.keyEnter = this.input.keyboard!.addKey("ENTER");
     this.initMap();
@@ -51,7 +55,6 @@ export class TownScene extends Scene {
   }
 
   update(time, delta): void {
-    
     this.timeFrame += delta;
     this.totaltime += delta;
     const currentTime = this.totaltime;
@@ -63,7 +66,7 @@ export class TownScene extends Scene {
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).update();
     });
-
+    
 
     // if (this.timeFrame > 5000) {
     if (this.timeFrame > 10000) {
@@ -130,7 +133,7 @@ export class TownScene extends Scene {
                     undefined,
                     listener
                   );
-                  npc.setTextBox(content.text, "TEST");
+                  npc.setTextBox(content.text, this.player);
                   break;
 
 
@@ -170,16 +173,16 @@ export class TownScene extends Scene {
                   //   }
                   
                   if (content.speaking=="True"){
-                    npc.setTextBox(content.text, "TEST");
+                    npc.setTextBox(content.text, this.player);
                   }
                   else{
-                    npc.setTextBox("Listening...", "TEST");
+                    npc.setTextBox("Listening...", this.player);
                   }
                   break;
                 default:
                   var temp_time=30000;
                   npc.setcurtaskendtime(this.totaltime+temp_time);
-                  npc.setTextBox("[" + content.action + "]", "TEST");
+                  npc.setTextBox("[" + content.action + "]", this.player);
                   break;
               }
             }
@@ -293,6 +296,11 @@ export class TownScene extends Scene {
         (npc as NPC).setTalking(true);
         this.createInputBox(npc);
       }
+    });
+
+    this.keyK.on('up', () => {
+      console.log("K is pressed");
+      this.createSituationInputBox();
     });
     // this.keyEnter.on("up", () => {});
 
@@ -419,6 +427,105 @@ export class TownScene extends Scene {
     });
   }
 
+  createSituationInputBox() {
+    console.log("createSituationInputBox");
+    this.disableKeyboard();
+    var upperLeftCorner = this.cameras.main.getWorldPoint(
+      this.cameras.main.width * 0.2,
+      this.cameras.main.height * 0.3
+    );
+    var x = upperLeftCorner.x;
+    var y = upperLeftCorner.y;
+    var width = this.cameras.main.width;
+    var height = this.cameras.main.height;
+    var scale = this.cameras.main.zoom;
+
+    var inputText = this.rexUI.add
+      .inputText({
+        x: x,
+        y: y,
+        width: width * 0.6,
+        height: height * 0.3,
+        type: "textarea",
+        text: "",
+        color: "#ffffff",
+        border: 2,
+        backgroundColor: "#" + COLOR_DARK.toString(16),
+        borderColor: "#" + COLOR_LIGHT.toString(16),
+      })
+      .setOrigin(0)
+      .setScale(1 / scale, 1 / scale)
+      .setFocus()
+      .setAlpha(0.8);
+
+    const self = this;
+    var submitBtn = this.rexUI.add
+      .label({
+        x: x,
+        y: y + inputText.height / scale + 5,
+        background: this.rexUI.add
+          .roundRectangle(0, 0, 2, 2, 20, COLOR_PRIMARY)
+          .setStrokeStyle(2, COLOR_LIGHT),
+        text: this.add.text(0, 0, "Submit"),
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+        },
+      })
+      .setOrigin(0)
+      .setScale(1 / scale, 1 / scale)
+      .layout();
+
+    var cancelBtn = this.rexUI.add
+      .label({
+        x: x + submitBtn.width / scale + 5,
+        y: y + inputText.height / scale + 5,
+        background: this.rexUI.add
+          .roundRectangle(0, 0, 2, 2, 20, COLOR_PRIMARY)
+          .setStrokeStyle(2, COLOR_LIGHT),
+        text: this.add.text(0, 0, "Cancel"),
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+        },
+      })
+      .setOrigin(0)
+      .setScale(1 / scale, 1 / scale)
+      .layout();
+
+    submitBtn.onClick(function (
+      click: Click,
+      gameObject: Phaser.GameObjects.GameObject,
+      pointer: Phaser.Input.Pointer,
+      event: Phaser.Types.Input.EventData
+    ) {
+      let text = inputText.text;
+      console.log("text: ", text);
+      inputText.destroy();
+      gameObject.destroy();
+      cancelBtn.destroy();
+      self.submitSituationPrompt(text);
+    });
+
+    cancelBtn.onClick(function (
+      click: Click,
+      gameObject: Phaser.GameObjects.GameObject,
+      pointer: Phaser.Input.Pointer,
+      event: Phaser.Types.Input.EventData
+    ) {
+      inputText.destroy();
+      gameObject.destroy();
+      submitBtn.destroy();
+      self.enableKeyboard();
+    });
+  }
+
+
+
   submitPrompt(prompt: string, npc: Physics.Arcade.Sprite) {
     var waitingBox = this.createTextBox().start(
       "Waiting for the response...",
@@ -466,6 +573,28 @@ export class TownScene extends Scene {
       });
     });
   }
+
+  submitSituationPrompt(situation: string) {
+    fetch("http://127.0.0.1:10003/reaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        agent_ids: [0, 1, 2, 3],
+        situation: situation
+      }),
+    }).then((response) => {
+      response.json().then((data) => {
+        this.enableKeyboard();
+        console.log(data);
+        console.log("reaction response");
+      });
+    });
+  }
+
+
 
   createTextBox(): TextBox {
     var upperLeftCorner = this.cameras.main.getWorldPoint(
@@ -539,6 +668,9 @@ export class TownScene extends Scene {
     return tile;
   }
 
+  
+  
+
   getNPCNeighbor(npc_name: string): [TileXYType, number, NPC] {
     var npc = this.npcGroup.getChildren().find((npc) => {
       return (npc as NPC).name == npc_name;
@@ -598,6 +730,9 @@ export class TownScene extends Scene {
     npc.setTargetNPC(targetNPC);
     npc.moveAlongPath(path, finalDirection, targetLocation);
   }
+
+
+
 }
 
 function getNearbyNPC(
@@ -642,3 +777,4 @@ function getNearbyNPC(
 
   return [nearbyObject, direction];
 }
+
