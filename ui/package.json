@@ -4,7 +4,7 @@
     "description": "A Phaser 3 Project Template using Rollup and TypeScript",
     "main": "src/index.ts",
     "scripts": {
-        "dev": "rollup --config rollup.config.dev.mjs",
+        "dev": "rollup --config rollup.config.dev.mjs --bundleConfigAsCjs",
         "build": "rollup --config rollup.config.dist.mjs",
         "watch": "rollup --watch --config rollup.config.dev.mjs"
     },
@@ -25,6 +25,7 @@
         "@rollup/plugin-terser": "^0.4.0",
         "@rollup/plugin-typescript": "^11.1.0",
         "connect": "^3.7.0",
+        "express": "^4.18.2",
         "phaser": "^3.60.0",
         "rollup": "^3.20.2",
         "rollup-plugin-commonjs": "^10.1.0",

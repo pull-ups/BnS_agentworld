@@ -72,6 +72,7 @@ export class TownScene extends Scene {
         var allNpcs = this.npcGroup.getChildren();
         var shouldUpdate = [];
 
+        
         for (let i = 0; i < this.npcGroup.getLength(); i++) {
           // for (let i = 0; i < 1; i++) {
           if (
@@ -82,10 +83,10 @@ export class TownScene extends Scene {
             shouldUpdate.push(i);
           }
           else{
-            console.log((allNpcs[i] as NPC).name);
-            console.log("is moving", (allNpcs[i] as NPC).isMoving());
-            console.log("is talking", (allNpcs[i] as NPC).isTalking());
-            console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
+            // console.log((allNpcs[i] as NPC).name);
+            // console.log("is moving", (allNpcs[i] as NPC).isMoving());
+            // console.log("is talking", (allNpcs[i] as NPC).isTalking());
+            // console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
 
           }
         }
@@ -129,26 +130,56 @@ export class TownScene extends Scene {
                     undefined,
                     listener
                   );
-                  npc.setTextBox(content.text);
+                  npc.setTextBox(content.text, "TEST");
                   break;
 
 
                 case "Conversation":
                   //May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Conversation", "speaking": "True"}
                   //Steven: {"to": "May", "text": "", "action": "Conversation", "speaking": "False"}
+                  
+                  if (content.text == "conversation_finish"){
+                    for (let i = 0; i < this.npcGroup.getLength(); i++) {
+                      if ((allNpcs[i] as NPC).name == content.to){
+                        var listener = allNpcs[i] as NPC;
+                        listener.emptydialoghistory();
+                        break;
+                      }
+                    }
+                    npc.emptydialoghistory();
+                    break;
+                  }
+
+                  // 지금 들어온 발화를 npc와 listener의 dialoghistory에 추가
+                  if (content.text != ""){
+                    for (let i = 0; i < this.npcGroup.getLength(); i++) {
+                      if ((allNpcs[i] as NPC).name == content.to){
+                        var listener = allNpcs[i] as NPC;
+                        listener.adddialoghistory(npc.name + " : " + content.text);
+                        break;
+                      }
+                    }
+                    npc.adddialoghistory(npc.name + " : " + content.text);
+                  };
+                  
+                  //dialog history 출력
+                  // for (let i = 0; i < this.npcGroup.getLength(); i++) {
+                  //     var a = allNpcs[i] as NPC;
+                  //     console.log("dialoghistory of ", a.name);
+                  //     console.log(a.getdialoghistory());
+                  //   }
+                  
                   if (content.speaking=="True"){
-                    npc.setTextBox(content.text);
+                    npc.setTextBox(content.text, "TEST");
                   }
                   else{
-                    npc.setTextBox("Listening...");
+                    npc.setTextBox("Listening...", "TEST");
                   }
                   break;
-
-
                 default:
                   var temp_time=30000;
                   npc.setcurtaskendtime(this.totaltime+temp_time);
-                  npc.setTextBox("[" + content.action + "]");
+                  npc.setTextBox("[" + content.action + "]", "TEST");
                   break;
               }
             }

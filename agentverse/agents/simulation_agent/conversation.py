@@ -113,17 +113,26 @@ class ConversationAgent(BaseAgent):
         if conversation_info["doing_conversation"]:
             #대화 남은 턴 처리
             self.doing_conversation=True
-            self.conversation_turn_last=conversation_info['conversation_turn_last']
+            if conversation_info["first"]:
+                self.conversation_turn_last=conversation_info['conversation_turn_last']
+            else:
+                self.conversation_turn_last-=1
             
             
             await asyncio.sleep(5)
+            
             chat_counterpart=conversation_info["to"]
-            if conversation_info["speaker"]:
-                chat_message=f"Hi {chat_counterpart},  I am {self.name}. How are you?"
-                content='{{"to": "{}", "text": "{}", "action": "Conversation", "speaking": "{}"}}'.format(chat_counterpart, chat_message,  True)
-                
-            else:
-                content='{{"to": "{}", "text": "", "action": "Conversation", "speaking": "{}"}}'.format(chat_counterpart, False)
+            
+            if self.conversation_turn_last==0: #대화가 끝났으면
+                content='{{"to": "{}", "text": "conversation_finish", "action": "Conversation"}}'.format(conversation_info["to"])
+            
+            else: # 대화가 안끝났으면, 말하는 사람과 듣는 사람 구분하여 메세지 전달                
+                if conversation_info["speaker"]:
+                    chat_message=f"Hi {chat_counterpart},  I am {self.name}. How are you?"
+                    content='{{"to": "{}", "text": "{}", "action": "Conversation", "speaking": "{}"}}'.format(chat_counterpart, chat_message,  True)
+                    
+                else:
+                    content='{{"to": "{}", "text": "", "action": "Conversation", "speaking": "{}"}}'.format(chat_counterpart, False)
         else:
             move_list=['{"to": "Shop", "action": "MoveTo"}', 
                    '{"to": "Bike Store", "action": "MoveTo"}', 
@@ -149,7 +158,7 @@ class ConversationAgent(BaseAgent):
             receiver=self.get_receiver(),
         )
         #sngwonprint
-        print(self.name, message)
+        #print(self.name, message)
         
         return message
 

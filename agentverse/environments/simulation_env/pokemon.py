@@ -38,8 +38,11 @@ def get_already_in_conversation_pair(self):
     
     conversation_pairs = set()    
     already_in_conversation_agent_ids_pair=[]
+    #import pdb; pdb.set_trace()
     for message in self.last_messages:
         if message.content != None:
+            
+            print("message content : ", message.content)
             message_content=json.loads(message.content)
             if message_content["action"]=="Conversation":
                 #import pdb; pdb.set_trace()
@@ -53,7 +56,7 @@ def get_already_in_conversation_pair(self):
     return already_in_conversation_agent_ids_pair
 
 
-def get_conversation_pair(environment, nearbyNPCs, already_in_conversation_agent_ids_pair, prob=1.0):
+def get_conversation_pair(environment, agent_ids, nearbyNPCs, already_in_conversation_agent_ids_pair, prob=1.0):
     #주변 npc중에서 대화중이지 않은 npc들을 뽑아서 대화시키기
     already_in_conversation_agent_ids=serialize_tuple_list(already_in_conversation_agent_ids_pair)
     
@@ -85,8 +88,10 @@ def get_conversation_pair(environment, nearbyNPCs, already_in_conversation_agent
                 # Check if either NPC is already engaged in a conversation
                 already_in_convo = any(i in pair or j in pair for pair in conversations)
                 already_in_convo_previous_turn = i in already_in_conversation_agent_ids or j in already_in_conversation_agent_ids
-                if not already_in_convo and not already_in_convo_previous_turn and random.random() < prob:
-                    conversations.append((i, j))
+                update_in_cur_step=i in agent_ids and j in agent_ids
+                if (not already_in_convo) and (not already_in_convo_previous_turn) and (update_in_cur_step):
+                    if random.random() < prob:
+                        conversations.append((i, j))
 
     return conversations
 
@@ -125,6 +130,7 @@ class PokemonEnvironment(BaseEnvironment):
     max_turns: int = 10
     cnt_turn: int = 0
     last_messages: List[Message] = []
+    last_message_for_userchat: List[Message] = []
     rule_params: Dict = {}
 
     def __init__(self, rule, locations, **kwargs):
@@ -207,7 +213,7 @@ class PokemonEnvironment(BaseEnvironment):
         already_in_conversation_agent_ids_pair=get_already_in_conversation_pair(self)
         
         #대화를 시작하는 사람들
-        conversation_start_agent_ids_pair=get_conversation_pair(self, nearbyNPCs, already_in_conversation_agent_ids_pair, prob=0.5)
+        conversation_start_agent_ids_pair=get_conversation_pair(self, agent_ids, nearbyNPCs, already_in_conversation_agent_ids_pair, prob=1.0)
         # print("already_conversation" , already_in_conversation_agent_ids_pair)
         # print("start_conversation", conversation_start_agent_ids_pair)        
         
@@ -219,6 +225,9 @@ class PokemonEnvironment(BaseEnvironment):
         #1. 기존에 대화중인 애들 정보 업대이트
         for conversation_pair in already_in_conversation_agent_ids_pair:
             conversation_idx_1, conversation_idx_2 =conversation_pair[0], conversation_pair[1]
+            if self.agents[conversation_idx_1].conversation_turn_last==0 or self.agents[conversation_idx_2].conversation_turn_last==0:
+                
+                continue
             last_message_1, last_message_2 = get_message_with_idx(self, self.last_messages, conversation_idx_1), get_message_with_idx(self, self.last_messages, conversation_idx_2)
             
             # Message(content='{"to": "Steven",
@@ -228,8 +237,9 @@ class PokemonEnvironment(BaseEnvironment):
             for (agent_idx, message) in [(conversation_idx_1, last_message_1), (conversation_idx_2, last_message_2)]:
                 message_content=json.loads(message.content)
                 conversation_infos[agent_idx]["doing_conversation"]=True
+                conversation_infos[agent_idx]["first"]=False
                 conversation_infos[agent_idx]["to"]=message_content["to"]
-
+                
                 if message_content["speaking"]=="True":
                     conversation_infos[agent_idx]["speaker"]=False
                 elif message_content["speaking"]=="False":
@@ -238,25 +248,23 @@ class PokemonEnvironment(BaseEnvironment):
                     print("Invalid speaking value")
 
         #2. 지금 대화를 시작하는 애들 정보 업데이트
-            
-        
         for conversation_pair in conversation_start_agent_ids_pair:
             #대화 턴 설정!!
-            dialog_turn=random.randint(4,6)
-            
-            
-            counterpart_idx=switch_values(agent_idx, conversation_pair)
-            if agent_idx in conversation_pair:
-                conversation_infos[agent_idx]["doing_conversation"]=True
-                conversation_infos[agent_idx]["to"]=self.agents[counterpart_idx].name
-                conversation_infos[agent_idx]["conversation_turn_last"]=dialog_turn
-                if agent_idx < counterpart_idx:
-                    #자기가 번호가 낮으면 speaker
-                    conversation_infos[agent_idx]["speaker"]=True
-                    conversation_infos[agent_idx]["listener"]=False
-                else:
-                    conversation_infos[agent_idx]["speaker"]=False
-                    conversation_infos[agent_idx]["listener"]=True
+            dialog_turn=random.randint(2,3)
+            for agent_idx in conversation_pair:
+                counterpart_idx=switch_values(agent_idx, conversation_pair)
+                if agent_idx in conversation_pair:
+                    conversation_infos[agent_idx]["doing_conversation"]=True
+                    conversation_infos[agent_idx]["to"]=self.agents[counterpart_idx].name
+                    conversation_infos[agent_idx]["first"]=True
+                    conversation_infos[agent_idx]["conversation_turn_last"]=dialog_turn
+                    if agent_idx < counterpart_idx:
+                        #자기가 번호가 낮으면 speaker
+                        conversation_infos[agent_idx]["speaker"]=True
+                        conversation_infos[agent_idx]["listener"]=False
+                    else:
+                        conversation_infos[agent_idx]["speaker"]=False
+                        conversation_infos[agent_idx]["listener"]=True
 
 
 
@@ -289,6 +297,51 @@ class PokemonEnvironment(BaseEnvironment):
         self.time += datetime.timedelta(minutes=5)
 
         return selected_messages
+
+
+
+
+    async def _respond_to_player_local(
+        self,
+        player_content: str = None,
+        receiver: str = None,
+        receiver_id: Optional[int] = None,
+    ) -> List[Message]:
+        if receiver_id is None:
+            for agent in self.agents:
+                if agent.name == receiver:
+                    receiver_id = agent.agent_id
+                    break
+        agent_ids = [receiver_id]
+        agent_name = receiver
+        player_message = Message(
+            sender="Brenden", content=player_content, receiver=[agent_name]
+        )
+
+        # Update the set of visible agents for each agent
+        self.rule.update_visible_agents(self)
+
+        # Generate current environment description
+        env_descriptions = self.rule.get_env_description(self, player_content)
+
+        # Generate the next message
+        messages = await asyncio.gather(
+            *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
+        )
+
+        # Some rules will select certain messages from all the messages
+        # selected_messages = self.rule.select_message(self, messages)
+
+        # Update the memory of the agents
+        self.last_message_for_userchat = [player_message, *messages]
+        self.rule.update_memory(self)
+        self.print_messages(messages)
+
+        self.cnt_turn += 1
+
+        return messages
+
+
 
 
     async def _routine_step(self, agent_ids) -> List[Message]:
@@ -350,13 +403,21 @@ class PokemonEnvironment(BaseEnvironment):
         # selected_messages = self.rule.select_message(self, messages)
 
         # Update the memory of the agents
-        self.last_messages = [player_message, *messages]
+        # print("==============in respond to player=================")
+        # print("player message:", player_message)
+        # print("messages:", messages)
+        
+        self.last_message_for_userchat = [player_message, *messages]
         self.rule.update_memory(self)
         self.print_messages(messages)
 
         self.cnt_turn += 1
 
         return messages
+
+
+
+
 
     def update_state(self, agent_location: Dict[str, str]):
         for agent_name, location in agent_location.items():

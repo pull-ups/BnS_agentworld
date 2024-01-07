@@ -16,6 +16,7 @@ export class NPC extends Actor {
   private canMove: boolean = true;
   private talkWithPlayer: boolean = false;
   private doingtask: boolean = false;
+  private dialoghistory: string[] = [];
   private curtaskendtime: number = 0;
   private path: PathFinder.NodeType[] = [];
   private finalDirection: number = undefined;
@@ -167,7 +168,7 @@ export class NPC extends Actor {
       .label({
         x: this.x + this.width / 2,
         y: this.y - this.height * 0.2,
-        width: 24 * scale,
+        width: 48 * scale,
         orientation: "x",
         background: scene.rexUI.add.roundRectangle(
           0,
@@ -197,6 +198,8 @@ export class NPC extends Actor {
       .layout();
   }
 
+
+  
   public destroyTextBox(): void {
     if (this.textBox != undefined) this.textBox.destroy();
     this.textBox = undefined;
@@ -260,6 +263,14 @@ export class NPC extends Actor {
   public setcurtaskendtime(curtaskendtime: number): void {
     this.curtaskendtime = curtaskendtime;
   }
-
+  public adddialoghistory(dialog: string): void {
+    this.dialoghistory.push(dialog);
+  }
+  public getdialoghistory(): string[] {
+    return this.dialoghistory;
+  }
+  public emptydialoghistory(): void {
+    this.dialoghistory = [];
+  }
 
 }

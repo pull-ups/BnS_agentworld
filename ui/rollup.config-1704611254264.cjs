@@ -1,12 +1,16 @@
-import commonjs from '@rollup/plugin-commonjs';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import replace from '@rollup/plugin-replace';
-import serve from 'rollup-plugin-serve';
-import typescript from '@rollup/plugin-typescript';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var commonjs = require('@rollup/plugin-commonjs');
+var pluginNodeResolve = require('@rollup/plugin-node-resolve');
+var replace = require('@rollup/plugin-replace');
+var serve = require('rollup-plugin-serve');
+var typescript = require('@rollup/plugin-typescript');
 
 const path = require('path');
 
-export default {
+var rollup_config_dev = {
 
     //  Our game entry point (edit as required)
     input: [
@@ -39,7 +43,7 @@ export default {
         }),
 
         //  Parse our .ts source files
-        nodeResolve({
+        pluginNodeResolve.nodeResolve({
             browser: true,
             extensions: [ '.ts', '.tsx' ]
         }),
@@ -89,3 +93,5 @@ export default {
 
     ]
 };
+
+exports.default = rollup_config_dev;

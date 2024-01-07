@@ -44,6 +44,27 @@ class UpdateRequest(BaseModel):
 def root():
     return {"message": "Hello World"}
 
+
+
+
+@app.post("/chat")
+def chat(message: UserRequest):
+    url = 'http://10.1.1.41:10002/chat'
+    data=message.dict()
+    
+    #content = message.content
+    #receiver = message.receiver
+    #receiver_id = message.receiver_id
+    response = requests.post(url, json=data)
+    
+    decoded_str = response.content.decode('utf-8')
+    data = json.loads(decoded_str)
+    
+    return data
+
+
+
+
 @app.post("/make_decision")
 def update(message: RoutineRequest):
     url = 'http://10.1.1.41:10002/make_decision'
