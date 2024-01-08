@@ -17,17 +17,20 @@ export class NPC extends Actor {
   private board: Board;
   private canMove: boolean = true;
   private talkWithPlayer: boolean = false;
-  private doingtask: boolean = false;
-  private dialoghistory: string[] = [];
-  private dialoghistory_string: string = "";
+  private doingtask: boolean = false;     // doing 뻘짓
+  private doingreaction: boolean = false; // doing reaction
+  private dialoghistory: string[] = [];   //대화 기록
+  private dialoghistory_string: string = "";  //대화 기록
   private curtaskendtime: number = 0;
   private path: PathFinder.NodeType[] = [];
   private finalDirection: number = undefined;
   private targetLocation: string = undefined;
   private targetNPC: NPC = undefined;
   private textBox: Label = undefined;
-  //private chatBox: TextArea = undefined;
-  private chatBox: Label = undefined;
+  private chatBox: Label = undefined;   //대화 보여주는 창 객체
+
+  private reaction_plan: string[] = []; 
+
   public id: number;
   public direction: number = DIRECTION.DOWN;
 
@@ -247,7 +250,7 @@ export class NPC extends Actor {
       })
       .setOrigin(0.5, 1.0)
       .setScale(1 / scale, 1 / scale)
-      .setDepth(this.y + this.height * 0.8+1)
+      .setDepth(9999)
       .layout();
 
     var submitBtn = scene.rexUI.add
@@ -267,7 +270,7 @@ export class NPC extends Actor {
       })
       .setOrigin(0)
       .setScale(1 / scale, 1 / scale)
-      .setDepth(this.y + this.height * 0.8 + 2)
+      .setDepth(10000)
       .layout();
     submitBtn.setInteractive();
     submitBtn.on('pointerdown', () => {
@@ -327,7 +330,9 @@ export class NPC extends Actor {
   public isDoingtask(): boolean {
     return this.doingtask;
   }
-
+  public isDoingReaction(): boolean {
+    return this.doingreaction;
+  }
   public setTalking(talking: boolean): void {
     this.talkWithPlayer = talking;
   }
@@ -357,7 +362,20 @@ export class NPC extends Actor {
   public getdialoghistorystring(): string {
     return this.dialoghistory_string;
   }
-  
+  public setreactionplan(doingreaction: boolean, reactionplan: string): void {
+    this.doingreaction=doingreaction;
+    if (doingreaction==true){
+      this.reaction_plan = reactionplan.split(',').map(item => item.trim().split('. ')[1]);
+    }
+    else{
+      this.reaction_plan = [];
+    }
+  }
+
+  public getreactionplan(): string[] {
+    return this.reaction_plan;
+  }
+
   public emptydialoghistory(): void {
     this.dialoghistory = [];
     this.dialoghistory_string="";

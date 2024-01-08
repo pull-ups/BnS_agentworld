@@ -81,15 +81,17 @@ export class TownScene extends Scene {
           if (
             !(allNpcs[i] as NPC).isMoving() &&
             !(allNpcs[i] as NPC).isTalking() &&
-            !(allNpcs[i] as NPC).isDoingtask()
+            !(allNpcs[i] as NPC).isDoingtask() &&
+            !(allNpcs[i] as NPC).isDoingReaction()
           ) {
             shouldUpdate.push(i);
           }
           else{
-            // console.log((allNpcs[i] as NPC).name);
-            // console.log("is moving", (allNpcs[i] as NPC).isMoving());
-            // console.log("is talking", (allNpcs[i] as NPC).isTalking());
-            // console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
+            console.log((allNpcs[i] as NPC).name);
+            console.log("is moving", (allNpcs[i] as NPC).isMoving());
+            console.log("is talking", (allNpcs[i] as NPC).isTalking());
+            console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
+            console.log("is doingreaction", (allNpcs[i] as NPC).isDoingReaction());
 
           }
         }
@@ -140,7 +142,6 @@ export class TownScene extends Scene {
                 case "Conversation":
                   //May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Conversation", "speaking": "True"}
                   //Steven: {"to": "May", "text": "", "action": "Conversation", "speaking": "False"}
-                  
                   if (content.text == "conversation_finish"){
                     for (let i = 0; i < this.npcGroup.getLength(); i++) {
                       if ((allNpcs[i] as NPC).name == content.to){
@@ -172,6 +173,11 @@ export class TownScene extends Scene {
                   //     console.log(a.getdialoghistory());
                   //   }
                   
+                  //response중이었으면 대화 출력 X
+                  if (npc.isDoingReaction()){
+                    break;
+                  }
+                  //대화 출력
                   if (content.speaking=="True"){
                     npc.setTextBox(content.text, this.player);
                   }
@@ -299,7 +305,6 @@ export class TownScene extends Scene {
     });
 
     this.keyK.on('up', () => {
-      console.log("K is pressed");
       this.createSituationInputBox();
     });
     // this.keyEnter.on("up", () => {});
@@ -428,7 +433,6 @@ export class TownScene extends Scene {
   }
 
   createSituationInputBox() {
-    console.log("createSituationInputBox");
     this.disableKeyboard();
     var upperLeftCorner = this.cameras.main.getWorldPoint(
       this.cameras.main.width * 0.2,
@@ -504,7 +508,6 @@ export class TownScene extends Scene {
       event: Phaser.Types.Input.EventData
     ) {
       let text = inputText.text;
-      console.log("text: ", text);
       inputText.destroy();
       gameObject.destroy();
       cancelBtn.destroy();
@@ -575,6 +578,15 @@ export class TownScene extends Scene {
   }
 
   submitSituationPrompt(situation: string) {
+    var allNpcs = this.npcGroup.getChildren();
+    if (situation=="finish"){
+      this.npcGroup.getChildren().forEach(function (npc) {
+        (npc as NPC).setreactionplan(false, "");
+        (npc as NPC).destroyTextBox();
+      });
+      
+      return;
+    }
     fetch("http://127.0.0.1:10003/reaction", {
       method: "POST",
       headers: {
@@ -588,8 +600,18 @@ export class TownScene extends Scene {
     }).then((response) => {
       response.json().then((data) => {
         this.enableKeyboard();
-        console.log(data);
-        console.log("reaction response");
+        for (let i = 0; i < data.length; i++) {
+          var npc = allNpcs[i] as NPC;
+          npc.destroyTextBox();
+          if (data[i].content == "") continue;
+          var content = JSON.parse(data[i].content);
+          //content = {text: 'Reacting to asd', plan: '1. A, 2. B, 3. C', action: 'Reaction'}
+          npc.setreactionplan(true, content.plan);
+          
+          var reaction_plan = npc.getreactionplan();
+          npc.setTextBox(content.text + "\n" + reaction_plan, this.player);
+        }
+
       });
     });
   }

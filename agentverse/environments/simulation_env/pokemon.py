@@ -194,6 +194,54 @@ class PokemonEnvironment(BaseEnvironment):
                 return await self._routine_step(agent_ids)
 
 
+
+    async def reactionstep(
+        self,
+        is_player: bool = False,
+        player_content: str = None,
+        receiver: str = None,
+        receiver_id: Optional[int] = None,
+        agent_ids: Optional[List[int]] = None,
+        situation: str = None,
+        llm: str = None,
+        model_dict: Optional[List[Any]] = None,
+    ) -> List[Message]:
+        if llm is not None:
+            return await self._reaction_local(agent_ids, situation)
+
+
+    async def _reaction_local(self, agent_ids, situation) -> List[Message]:
+        self.rule.update_visible_agents(self)
+
+        # agent_ids = self.rule.get_next_agent_idx(self)
+
+        # Generate current environment description
+        env_descriptions = self.rule.get_env_description(self)
+        info_from_envs=[{"env_description":env_descriptions[i],"situation":situation} for i in range(len(env_descriptions))]
+
+        # Generate the next message
+        messages = await asyncio.gather(
+            *[self.agents[i].areaction_local(info_from_envs[i]) for i in agent_ids]
+        )
+        
+        
+        # messages = self.get_test_messages()
+
+        # Some rules will select certain messages from all the messages
+        selected_messages = self.rule.select_message(self, messages)
+
+        # Update the memory of the agents
+        self.last_messages = selected_messages
+        self.rule.update_memory(self)
+        self.print_messages(selected_messages)
+
+        self.cnt_turn += 1
+        self.time += datetime.timedelta(minutes=5)
+
+        return selected_messages
+
+
+
     async def _routine_step_local(self, agent_ids) -> List[Message]:
         #sngwonprint
         # print("last message")
@@ -278,7 +326,6 @@ class PokemonEnvironment(BaseEnvironment):
 
         # Generate the next message
         messages = await asyncio.gather(
-            
             # *[self.agents[i].astep_local(env_descriptions[i]) for i in agent_ids]
             *[self.agents[i].astep_local(info_from_envs[i]) for i in agent_ids]
         )
@@ -297,9 +344,6 @@ class PokemonEnvironment(BaseEnvironment):
         self.time += datetime.timedelta(minutes=5)
 
         return selected_messages
-
-
-
 
     async def _respond_to_player_local(
         self,
@@ -340,6 +384,13 @@ class PokemonEnvironment(BaseEnvironment):
         self.cnt_turn += 1
 
         return messages
+
+
+
+
+
+
+
 
 
 

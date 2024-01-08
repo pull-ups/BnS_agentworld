@@ -163,6 +163,39 @@ class ConversationAgent(BaseAgent):
         return message
 
 
+
+
+
+
+
+    async def areaction_local(self, info_from_env: dict = "") -> Message:
+        env_description=info_from_env["env_description"]
+        situation=info_from_env["situation"]
+        
+
+        prompt = self._fill_prompt_template(env_description)
+        
+        await asyncio.sleep(15)
+        
+        content='{{"text": "Reacting to {}", "plan":"1. A, 2. B, 3. C", "action": "Reaction"}}'.format(situation)
+
+        
+        message = Message(
+            content=content,
+            sender=self.name,
+            receiver=self.get_receiver(),
+        )
+
+        return message
+
+
+
+
+
+
+
+
+
     def _fill_prompt_template(self, env_description: str = "") -> str:
         """Fill the placeholders in the prompt template
 

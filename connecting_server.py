@@ -51,7 +51,7 @@ def root():
 
 @app.post("/chat")
 def chat(message: UserRequest):
-    url = 'http://10.1.1.41:10002/chat'
+    url = 'http://10.1.1.52:10002/chat'
     data=message.dict()
     response = requests.post(url, json=data)
     
@@ -65,7 +65,7 @@ def chat(message: UserRequest):
 
 @app.post("/make_decision")
 def update(message: RoutineRequest):
-    url = 'http://10.1.1.41:10002/make_decision'
+    url = 'http://10.1.1.52:10002/make_decision'
     data=message.dict()
     print(data["agent_ids"])
     
@@ -84,7 +84,7 @@ def update(message: RoutineRequest):
 
 @app.post("/reaction")
 def reaction(message: ReactionRequest):
-    url = 'http://10.1.1.41:10002/reaction'
+    url = 'http://10.1.1.52:10002/reaction'
     data=message.dict()
     response = requests.post(url, json=data)
     
@@ -98,7 +98,7 @@ def reaction(message: ReactionRequest):
 
 @app.post("/update_location")
 def update_location(message: UpdateRequest):
-    url = 'http://10.1.1.41:10002/update_location'
+    url = 'http://10.1.1.52:10002/update_location'
     data=message.dict()
     response = requests.post(url, json=data)
     #print("in update_location")

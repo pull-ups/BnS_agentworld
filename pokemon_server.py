@@ -50,7 +50,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#/home/sngwon/workspace/AgentVerse/agentverse_command/../agentverse/tasks/simulation/pokemon"
 task_dir="/home/sngwon/workspace/AgentVerse/agentverse/tasks/simulation"
 agent_verse = Simulation.from_task("pokemon", tasks_dir=task_dir)
 
@@ -74,11 +73,6 @@ agent_verse = Simulation.from_task("pokemon", tasks_dir=task_dir)
 #     "model_3":model_3,
 #     "tokenizer":tokenizer
 # }
-
-
-
-
-
 
 
 
@@ -120,11 +114,10 @@ def update(message: RoutineRequest):
 
 @app.post("/reaction")
 def reaction(message: ReactionRequest):
-    return {"message": "Update location complete"}
-
-
-
-
+    response = agent_verse.reaction(agent_ids=message.agent_ids, situation=message.situation, llm="local")
+    print("==response of Reaction==")
+    print(response)
+    return [r.dict() for r in response]
 
 
 

@@ -12,6 +12,7 @@ class Registry(BaseModel):
     def register(self, key: str):
         def decorator(class_builder):
             self.entries[key] = class_builder
+            
             return class_builder
 
         return decorator

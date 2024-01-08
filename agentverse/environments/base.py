@@ -39,9 +39,17 @@ class BaseEnvironment(BaseModel):
 
     @abstractmethod
     async def step(self) -> List[Message]:
-        
         """Run one step of the environment"""
         pass
+    
+    
+    @abstractmethod
+    async def reactionstep(self) -> List[Message]:
+        print("reactionstep abstract")
+        """Run one step of the environment"""
+        pass
+
+
 
     @abstractmethod
     def reset(self) -> None:

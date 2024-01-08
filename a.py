@@ -3,7 +3,7 @@ import json
 
 # The URL of the endpoint
 
-url = 'http://10.1.1.43:10002/make_decision'
+
 
 # Sample data to be sent in the POST request
 data = {
