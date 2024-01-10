@@ -42,6 +42,7 @@ export class TownScene extends Scene {
   public rexBoard: BoardPlugin;
   private board: BoardPlugin.Board;
   private pathFinder: PathFinder;
+  private clockText: GameObjects.Text;
 
   constructor() {
     super("town-scene");
@@ -55,7 +56,8 @@ export class TownScene extends Scene {
     this.initMap();
     this.initSprite();
     this.initCamera();
-
+    this.clockText = this.add.text(10, 10, "", { fontSize: '16px'}).setScrollFactor(0);
+    this.updateClock();
 
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).setNameBox();
@@ -67,7 +69,7 @@ export class TownScene extends Scene {
     this.timeFrame += delta;
     this.totaltime += delta;
     const currentTime = this.totaltime;
-
+    
     this.player.update();
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).setdoingtask(currentTime);
@@ -75,149 +77,150 @@ export class TownScene extends Scene {
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).update();
     });
-
-
-
+    this.updateClock();
 
     // if (this.timeFrame > 5000) {
-    if (this.timeFrame > 10000) {
-      if (!this.isQuerying) {
-        this.isQuerying = true;
-        var allNpcs = this.npcGroup.getChildren();
-        var shouldUpdate = [];
+    // if (this.timeFrame > 10000) {
+    //   if (!this.isQuerying) {
+    //     this.isQuerying = true;
+    //     var allNpcs = this.npcGroup.getChildren();
+    //     var shouldUpdate = [];
 
         
-        for (let i = 0; i < this.npcGroup.getLength(); i++) {
-          // for (let i = 0; i < 1; i++) {
-          if (
-            !(allNpcs[i] as NPC).isMoving() &&
-            !(allNpcs[i] as NPC).isTalking() &&
-            !(allNpcs[i] as NPC).isDoingtask() &&
-            !(allNpcs[i] as NPC).isDoingReaction()
-          ) {
-            shouldUpdate.push(i);
-          }
-          else{
-            console.log((allNpcs[i] as NPC).name);
-            console.log("is moving", (allNpcs[i] as NPC).isMoving());
-            console.log("is talking", (allNpcs[i] as NPC).isTalking());
-            console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
-            console.log("is doingreaction", (allNpcs[i] as NPC).isDoingReaction());
+    //     for (let i = 0; i < this.npcGroup.getLength(); i++) {
+    //       // for (let i = 0; i < 1; i++) {
+    //       if (
+    //         !(allNpcs[i] as NPC).isMoving() &&
+    //         !(allNpcs[i] as NPC).isTalking() &&
+    //         !(allNpcs[i] as NPC).isDoingtask() &&
+    //         !(allNpcs[i] as NPC).isDoingReaction()
+    //       ) {
+    //         shouldUpdate.push(i);
+    //       }
+    //       else{
+    //         // console.log((allNpcs[i] as NPC).name);
+    //         // console.log("is moving", (allNpcs[i] as NPC).isMoving());
+    //         // console.log("is talking", (allNpcs[i] as NPC).isTalking());
+    //         // console.log("is doingtask", (allNpcs[i] as NPC).isDoingtask());
+    //         // console.log("is doingreaction", (allNpcs[i] as NPC).isDoingReaction());
 
-          }
-        }
-        fetch("http://127.0.0.1:10003/make_decision", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "same-origin",
-          body: JSON.stringify({
-            agent_ids: shouldUpdate,
-          }),
-        }).then((response) => {
-          response.json().then((data) => {
-            // this.npcGroup.getChildren().forEach(function (npc) {
-            //   (npc as NPC).destroyTextBox();
-            // });
-            for (let i = 0; i < data.length; i++) {
-              var npc = allNpcs[shouldUpdate[i]] as NPC;
-              if (data[i].content == "") continue;
-              var content = JSON.parse(data[i].content);
-              switch (content.action) {
-                case "MoveTo":
+    //       }
+    //     }
+    //     fetch("http://127.0.0.1:10003/make_decision", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       credentials: "same-origin",
+    //       body: JSON.stringify({
+    //         agent_ids: shouldUpdate,
+    //       }),
+    //     }).then((response) => {
+    //       response.json().then((data) => {
+    //         // this.npcGroup.getChildren().forEach(function (npc) {
+    //         //   (npc as NPC).destroyTextBox();
+    //         // });
+    //         for (let i = 0; i < data.length; i++) {
+    //           var npc = allNpcs[shouldUpdate[i]] as NPC;
+    //           if (data[i].content == "") continue;
+    //           var content = JSON.parse(data[i].content);
+    //           switch (content.action) {
+    //             case "MoveTo":
 
-                  var tile = this.getRandomTileAtLocation(content.to);
-                  if (tile == undefined) break;
-                  npc.destroyTextBox();
-                  npc.destroyNameBox();
+    //               var tile = this.getRandomTileAtLocation(content.to);
+    //               if (tile == undefined) break;
+    //               npc.destroyTextBox();
+    //               npc.destroyNameBox();
 
-                  this.moveNPC(shouldUpdate[i], tile, undefined, content.to);
-                  break;
-                case "Speak":
-                  var ret = this.getNPCNeighbor(content.to);
-                  var tile = ret[0];
-                  var finalDirection = ret[1];
-                  var listener = ret[2];
-                  if (tile == undefined) break;
-                  this.moveNPC(
-                    shouldUpdate[i],
-                    tile,
-                    finalDirection,
-                    undefined,
-                    listener
-                  );
-                  npc.setTextBox(content.text, this.player);
-                  break;
-
-
-                case "Conversation":
-                  npc.setNameBox();
-                  //May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Conversation", "speaking": "True"}
-                  //Steven: {"to": "May", "text": "", "action": "Conversation", "speaking": "False"}
-                  if (content.text == "conversation_finish"){
-                    for (let i = 0; i < this.npcGroup.getLength(); i++) {
-                      if ((allNpcs[i] as NPC).name == content.to){
-                        var listener = allNpcs[i] as NPC;
-                        listener.emptydialoghistory();
-                        break;
-                      }
-                    }
-                    npc.emptydialoghistory();
-                    npc.destroyNameBox();
-                    break;
-                  }
+    //               this.moveNPC(shouldUpdate[i], tile, undefined, content.to);
+    //               break;
+    //             case "Speak":
+    //               var ret = this.getNPCNeighbor(content.to);
+    //               var tile = ret[0];
+    //               var finalDirection = ret[1];
+    //               var listener = ret[2];
+    //               if (tile == undefined) break;
+    //               this.moveNPC(
+    //                 shouldUpdate[i],
+    //                 tile,
+    //                 finalDirection,
+    //                 undefined,
+    //                 listener
+    //               );
+    //               npc.setTextBox(content.text, this.player);
+    //               break;
 
 
-                  // Lusung: {"to": "Yura", "text": "", "action": "Conversation", "speaking": "False"}
-                  // Yura: {"to": "Lusung", "text": " Ah, Lusung, it is indeed a pleasure to see you again. This place holds a special significance for us, doesn't it? The memories of our shared trials and victories still echo through the whispers of the breeze that caresses these ancient
+    //             case "Conversation":
+    //               npc.setNameBox();
+    //               //May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Conversation", "speaking": "True"}
+    //               //Steven: {"to": "May", "text": "", "action": "Conversation", "speaking": "False"}
+    //               if (content.text == "conversation_finish"){
+    //                 for (let i = 0; i < this.npcGroup.getLength(); i++) {
+    //                   if ((allNpcs[i] as NPC).name == content.to){
+    //                     var listener = allNpcs[i] as NPC;
+    //                     listener.emptydialoghistory();
+    //                     break;
+    //                   }
+    //                 }
+    //                 npc.emptydialoghistory();
+    //                 npc.destroyNameBox();
+    //                 break;
+    //               }
 
-                  // 지금 들어온 발화를 npc와 listener의 dialoghistory에 추가
+
+    //               // Lusung: {"to": "Yura", "text": "", "action": "Conversation", "speaking": "False"}
+    //               // Yura: {"to": "Lusung", "text": " Ah, Lusung, it is indeed a pleasure to see you again. This place holds a special significance for us, doesn't it? The memories of our shared trials and victories still echo through the whispers of the breeze that caresses these ancient
+
+    //               // 지금 들어온 발화를 npc와 listener의 dialoghistory에 추가
                   
-                  if (content.text != ""){
-                    for (let i = 0; i < this.npcGroup.getLength(); i++) {
-                      if ((allNpcs[i] as NPC).name == content.to){
-                        var listener = allNpcs[i] as NPC;
-                        listener.adddialoghistory(npc.name + " : " + content.text);
-                        break;
-                      }
-                    }
-                    npc.adddialoghistory(npc.name + " : " + content.text);
-                  };
+    //               if (content.text != ""){
+    //                 for (let i = 0; i < this.npcGroup.getLength(); i++) {
+    //                   if ((allNpcs[i] as NPC).name == content.to){
+    //                     var listener = allNpcs[i] as NPC;
+    //                     listener.adddialoghistory(npc.name + " : " + content.text);
+    //                     break;
+    //                   }
+    //                 }
+    //                 npc.adddialoghistory(npc.name + " : " + content.text);
+    //               };
                   
-                  //dialog history 출력
-                  // for (let i = 0; i < this.npcGroup.getLength(); i++) {
-                  //     var a = allNpcs[i] as NPC;
-                  //     console.log("dialoghistory of ", a.name);
-                  //     console.log(a.getdialoghistory());
-                  //   }
+    //               //dialog history 출력
+    //               // for (let i = 0; i < this.npcGroup.getLength(); i++) {
+    //               //     var a = allNpcs[i] as NPC;
+    //               //     console.log("dialoghistory of ", a.name);
+    //               //     console.log(a.getdialoghistory());
+    //               //   }
                   
-                  //response중이었으면 대화 출력 X
-                  if (npc.isDoingReaction()){
-                    break;
-                  }
-                  //대화 출력
-                  if (content.speaking=="True"){
-                    npc.setTextBox(content.text, this.player);
-                  }
-                  else{
-                    npc.setTextBox("Listening...", this.player, false);
-                  }
-                  break;
-                default:
-                  npc.setNameBox();
-                  var temp_time=30000;
-                  npc.setcurtaskendtime(this.totaltime+temp_time);
-                  npc.setTextBox("[" + content.action + "]", this.player);
-                  break;
-              }
-            }
-            this.isQuerying = false;
-          });
-        });
-      }
-      this.timeFrame = 0;
-    }
+    //               //response중이었으면 대화 출력 X
+    //               if (npc.isDoingReaction()){
+    //                 break;
+    //               }
+    //               //대화 출력
+    //               if (content.speaking=="True"){
+    //                 npc.setTextBox(content.text, this.player);
+    //               }
+    //               else{
+    //                 npc.setTextBox("Listening...", this.player, false);
+    //               }
+    //               break;
+    //             default:
+    //               npc.setNameBox();
+    //               var temp_time=30000;
+    //               npc.setcurtaskendtime(this.totaltime+temp_time);
+    //               npc.setTextBox("[" + content.action + "]", this.player);
+    //               break;
+    //           }
+    //         }
+    //         this.isQuerying = false;
+    //       });
+    //     });
+    //   }
+    //   this.timeFrame = 0;
+    // }
+  }
+  updateClock(): void {
+    this.clockText.setText('Time: ' + convertToClockTime(this.totaltime));
   }
 
   initMap(): void {
@@ -379,6 +382,7 @@ export class TownScene extends Scene {
         text: "",
         color: "#ffffff",
         border: 2,
+        fontSize: "40px",
         backgroundColor: "#" + COLOR_DARK.toString(16),
         borderColor: "#" + COLOR_LIGHT.toString(16),
       })
@@ -473,6 +477,7 @@ export class TownScene extends Scene {
         type: "textarea",
         text: "",
         color: "#ffffff",
+        fontSize: "40px",
         border: 2,
         backgroundColor: "#" + COLOR_DARK.toString(16),
         borderColor: "#" + COLOR_LIGHT.toString(16),
@@ -597,16 +602,17 @@ export class TownScene extends Scene {
     });
   }
 
-  submitSituationPrompt(situation: string) {
+  submitSituationPrompt(situation) {
     var allNpcs = this.npcGroup.getChildren();
-    if (situation=="finish"){
-      this.npcGroup.getChildren().forEach(function (npc) {
-        (npc as NPC).setreactionplan(false, "");
+    if (situation == "finish") {
+      this.npcGroup.getChildren().forEach(function(npc) {
+        (npc as NPC).setreaction("");
         (npc as NPC).destroyTextBox();
       });
-      
+  
       return;
     }
+  
     fetch("http://127.0.0.1:10003/reaction", {
       method: "POST",
       headers: {
@@ -618,24 +624,54 @@ export class TownScene extends Scene {
         situation: situation
       }),
     }).then((response) => {
-      response.json().then((data) => {
-        this.enableKeyboard();
-        for (let i = 0; i < data.length; i++) {
-          var npc = allNpcs[i] as NPC;
-          npc.destroyTextBox();
-          if (data[i].content == "") continue;
-          var content = JSON.parse(data[i].content);
-          //content = {text: 'Reacting to asd', plan: '1. A, 2. B, 3. C', action: 'Reaction'}
-          npc.setreactionplan(true, content.plan);
-          
-          var reaction_plan = npc.getreactionplan();
-          npc.setTextBox(content.text + "\n" + reaction_plan, this.player);
-        }
-
+      return response.json(); // Parse the JSON of the response
+    }).then((data) => {
+      this.enableKeyboard();
+      var reaction_arr = [];
+      for (let i = 0; i < data.length; i++) {
+        var npc = allNpcs[i] as NPC;
+        npc.destroyTextBox();
+        if (data[i].content == "") continue;
+        var content = JSON.parse(data[i].content);
+        npc.setreaction(content.text);
+  
+        var content_text_short = content.text.length > 100 ? content.text.substring(0, 100) + "..." : content.text;
+        npc.setReactionBox(content_text_short, content.text, this.player);
+  
+        reaction_arr.push(npc.getreaction());
+      }
+  
+  
+      // Now fetch the reactionplan
+      return fetch("http://127.0.0.1:10003/reactionplan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          agent_ids: [0, 1, 2, 3],
+          situation: situation,
+          reactions: reaction_arr
+        }),
       });
+    }).then((response) => {
+      return response.json(); // Parse the JSON of this response
+    }).then((data) => {
+      //여기
+
+
+
+      console.log("Reaction plans:", data);
+
+
+
+
+
+    }).catch((error) => {
+      console.error("Error:", error);
     });
   }
-
 
 
   createTextBox(): TextBox {
@@ -662,6 +698,7 @@ export class TownScene extends Scene {
         text: this.add
           .text(0, 0, "", {
             fixedWidth: width,
+            fontSize: '32px',
             wordWrap: {
               width: width,
             },
@@ -820,3 +857,13 @@ function getNearbyNPC(
   return [nearbyObject, direction];
 }
 
+function convertToClockTime(totaltime) {
+  // Convert milliseconds to minutes and seconds
+  let totalSeconds = Math.floor(totaltime / 1000);
+  let minutes = Math.floor(totalSeconds / 60);
+  let seconds = totalSeconds % 60;
+
+  // Format time to always show two digits for minutes and seconds
+  let formattedTime = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+  return formattedTime;
+}

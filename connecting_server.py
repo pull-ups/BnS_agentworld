@@ -42,6 +42,13 @@ class ReactionRequest(BaseModel):
     agent_ids: List[int]
     situation: str
 
+class ReactionPlanRequest(BaseModel):
+    agent_ids: List[int]
+    situation: str
+    reactions: List[str]
+
+
+
 @app.get("/")
 def root():
     return {"message": "Hello World"}
@@ -55,10 +62,8 @@ def chat(message: UserRequest):
     url = 'http://127.0.0.1:10002/chat'
     data=message.dict()
     response = requests.post(url, json=data)
-    
     decoded_str = response.content.decode('utf-8')
     data = json.loads(decoded_str)
-    
     return data
 
 
@@ -70,14 +75,10 @@ def update(message: RoutineRequest):
     url = 'http://127.0.0.1:10002/make_decision'
     data=message.dict()
     print(data["agent_ids"])
-    
     response = requests.post(url, json=data)
-    
     decoded_str = response.content.decode('utf-8')
-
     # Loading string as JSON
     data = json.loads(decoded_str)
-
     # Converting 'receiver' lists to sets
     for item in data:
         item['receiver'] = set(item['receiver'])
@@ -90,13 +91,21 @@ def reaction(message: ReactionRequest):
     url = 'http://127.0.0.1:10002/reaction'
     data=message.dict()
     response = requests.post(url, json=data)
-    
     decoded_str = response.content.decode('utf-8')
-
     data = json.loads(decoded_str)
-
-
     return data
+
+@app.post("/reactionplan")
+def reactionplan(message: ReactionPlanRequest):
+    url = 'http://127.0.0.1:10002/reactionplan'
+    data=message.dict()
+    response = requests.post(url, json=data)
+    decoded_str = response.content.decode('utf-8')
+    data = json.loads(decoded_str)
+    return data
+
+
+
 
 
 @app.post("/update_location")

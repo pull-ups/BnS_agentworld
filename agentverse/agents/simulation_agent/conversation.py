@@ -16,7 +16,7 @@ from agentverse.message import Message
 # from .base import BaseAgent
 from agentverse.agents import agent_registry
 from agentverse.agents.base import BaseAgent
-from .nc_templates import get_prompt_talkplayer, get_prompt_talknpc_init, get_prompt_talknpc
+from .nc_templates import get_prompt_talkplayer, get_prompt_talknpc_init, get_prompt_talknpc, get_prompt_reaction, get_prompt_reactionplan
 
 
 
@@ -40,6 +40,21 @@ GPT_TIMEOUT = 60
 # ------------------------------------------------
 # utils
 # ------------------------------------------------
+
+def parse_plan(text):
+    try:
+        actions = [r.split(" - ")[0].split(". ")[-1] for r in text.split("\n") if len(r) > 10]
+        times = [r.split(" - ")[1] for r in text.split("\n") if len(r) > 10]
+    except IndexError:
+        try:
+            actions = [r.split(" - ")[0].split(". ")[-1] for r in text.split("\n") if len(r) > 10]
+            times = [r.split(" - ")[1] for r in text.split("\n")[:3] if len(r) > 10] + ['20min']
+        except:
+            print("Error parsing plan")
+            return [], []
+    return actions, times
+            
+
 def parse_NPC_response(text):
     "Jinsoyun (speaking): Lusung, you stand before me now, your presence unchanged, as stubborn as ev"
     try:
@@ -193,13 +208,13 @@ class args: # hard coded
     npc_info_map = {
         "Jinsoyun": {
             "model": "Jinsoyun",
-            "host": "node32",
+            "host": "node31",
             "port": "4200",
             "log": "./logs/npc_0.log",
         },
         "Lusung": {
             "model": "Lusung",
-            "host": "node32",
+            "host": "node33",
             "port": "4201",
             "log": "./logs/npc_1.log",
         },
@@ -213,6 +228,12 @@ class args: # hard coded
             "model": "HongSokyun",
             "host": "node32",
             "port": "4203",
+            "log": "./logs/npc_3.log",
+        },
+        "plan": {
+            "model": "plan",
+            "host": "node32",
+            "port": "4204",
             "log": "./logs/npc_3.log",
         },
     }
@@ -238,18 +259,32 @@ def llm_local_inference(character_name, prompt):
     output = response.choices[0].message.content.strip()
     return output
 
-logger = get_logger()
 
 def pick_one_from_arr(arr):
     return arr[random.randint(0, len(arr)-1)]
         
+    
+logger = get_logger()
+
+
+# def map_pokemon_to_bns(pokemon_place):
+#     dict={
+#         "Bike Store" 
+#         "Shop"
+#         "Park"
+#         "Pokémon Center"
+#         "Pokémon Gym"
+#     }
+
+
 @agent_registry.register("conversation")
 class ConversationAgent(BaseAgent):
     doing_conversation=False
     conversation_turn_last=0
-    dialog_history=[]
-
-   
+    dialog_withNPC_history=[]
+    dialog_withplayer_history=[]
+    reaction=""
+    location=""
     
     
     def step(self, env_description: str = "") -> Message:
@@ -285,10 +320,11 @@ class ConversationAgent(BaseAgent):
     async def astep(self, env_description: str = "") -> Message:
         """Asynchronous version of step"""
         prompt = self._fill_prompt_template(env_description)
-        # print("===============")
+        
         parsed_response = None
         for i in range(self.max_retry):
             try:
+                print(i)
                 response = await self.llm.agenerate_response(prompt)                
                 parsed_response = self.output_parser.parse(response)
                 break
@@ -309,26 +345,22 @@ class ConversationAgent(BaseAgent):
             sender=self.name,
             receiver=self.get_receiver(),
         )
-        # print("==in agents/simulation_agent/conversation.py, message==")
-        # print(message)
-        # print(type(message))
-        # print("===============")
         return message
 
     #async def astep_local(self, env_description: str = "") -> Message:
-    async def astep_local(self, info_from_env: dict = "") -> Message:
+    async def astep_routine_local(self, info_from_env: dict = "") -> Message:
+        #prompt = self._fill_prompt_template(env_description)
         env_description=info_from_env["env_description"]
         nearbyNPCs=info_from_env["nearbyNPCs"]
         conversation_info=info_from_env["conversation_info"]
+        
 
-
-        prompt = self._fill_prompt_template(env_description)
         action_list=self.action_list
         #conversation_info={"doing_conversation":True, "to": Birch, "speaker": True, "listener": False}
         
         #대화중이면 action=Cnversation, 아니면 action=MoveTo or SomethingAction
-        print(f"Memory of {self.name}")
-        print(self.dialog_history)
+        # print(f"Memory of {self.name}")
+        # print(self.dialog_withNPC_history)
                                  
         if conversation_info["doing_conversation"]:
             #대화 남은 턴 처리
@@ -355,7 +387,7 @@ class ConversationAgent(BaseAgent):
                     if conversation_info["first"]:
                         prompt=get_prompt_talknpc_init(name=character_name, location="Jiwan's Peak", name_other=chat_counterpart, relationship="")
                     else:
-                        prompt=get_prompt_talknpc(name=character_name, location="Jiwan's Peak", name_other=chat_counterpart, relationship="", conversation_log=self.dialog_history)
+                        prompt=get_prompt_talknpc(name=character_name, location="Jiwan's Peak", name_other=chat_counterpart, relationship="", conversation_log=self.dialog_withNPC_history)
                     
                     output=llm_local_inference(character_name, prompt)
                     
@@ -400,63 +432,23 @@ class ConversationAgent(BaseAgent):
         return message
 
 
-    async def astep_respondtoplayer(self, env_description: str = "") -> Message:
+    async def astep_respondtoplayer_local(self, env_description: str = "", player_message: Message = Message() ) -> Message:
         """Asynchronous version of step"""
-        prompt = self._fill_prompt_template(env_description)
-        # print("===============")
-        parsed_response = None
+        #prompt = self._fill_prompt_template(env_description)
         
         character_name=self.name
-        print("========in astep_respondtoplayer======")
-        print(prompt)
-        print("===================================")
+        prompt=get_prompt_talkplayer(name=character_name, location="Jiwan's Peak", name_player=player_message.sender, message_fromplayer=player_message.content, conversation_withplayer_log=self.dialog_withplayer_history)
+
         output=llm_local_inference(character_name, prompt)
-        print("========output======")
-        print(output)
+
+        output=cut_sentence(output) # 3문장으로 자르기
+        output=parse_NPC_response(output) # (speaking): 제거
+        output=make_json_compatible(output) # json 형식으로 변환
         
-        # for i in range(self.max_retry):
-        #     try:
-        #         response = await self.llm.agenerate_response(prompt)                
-        #         parsed_response = self.output_parser.parse(response)
-        #         break
-        #     except (KeyboardInterrupt, bdb.BdbQuit):
-        #         raise
-        #     except Exception as e:
-        #         logger.error(e)
-        #         logger.warn("Retrying...")
-        #         continue
-
-        # if parsed_response is None:
-        #     logger.error(f"{self.name} failed to generate valid response.")
-
-        message = Message(
-            content=""
-            if parsed_response is None
-            else parsed_response.return_values["output"],
-            sender=self.name,
-            receiver=self.get_receiver(),
-        )
-        # print("==in agents/simulation_agent/conversation.py, message==")
-        # print(message)
-        # print(type(message))
-        # print("===============")
-        return message
-
-
-
-
-
-    async def areaction_local(self, info_from_env: dict = "") -> Message:
-        env_description=info_from_env["env_description"]
-        situation=info_from_env["situation"]
-        
-
-        prompt = self._fill_prompt_template(env_description)
-        
-        await asyncio.sleep(15)
-        
-        content='{{"text": "Reacting to {}", "plan":"1. A, 2. B, 3. C", "action": "Reaction"}}'.format(situation)
-
+        content='{{"to": "{}", "text": "{}", "action": "speak"}}'.format(player_message.sender, output)
+        #content='{"to": "Brendan", "text": "Hello, Brendan. What brings you here today?", "action": "Speak"}' 
+        #sender='Maxie' 
+        #receiver={'Maxie', 'May', 'Birch'} 
         
         message = Message(
             content=content,
@@ -465,6 +457,73 @@ class ConversationAgent(BaseAgent):
         )
 
         return message
+
+
+
+    async def areaction_local(self, info_from_env: dict = "") -> Message:
+        #prompt = self._fill_prompt_template(env_description)
+        env_description=info_from_env["env_description"]
+        situation=info_from_env["situation"]
+        
+        character_name=self.name
+        prompt=get_prompt_reaction(name=character_name, location="Jiwan's Peak", situation=situation)
+
+        output=llm_local_inference(character_name, prompt)
+
+        output=cut_sentence(output) # 3문장으로 자르기
+        output=parse_NPC_response(output) # (speaking): 제거
+        output=make_json_compatible(output) # json 형식으로 변환
+        
+        self.reaction=output
+        content='{{"text": "{}", "plan":"1. A, 2. B, 3. C", "action": "Reaction"}}'.format(output)
+        
+        
+        message = Message(
+            content=content,
+            sender=self.name,
+            receiver=self.get_receiver(),
+        )
+
+        return message
+
+
+
+
+    async def areactionplan_local(self, info_from_env: dict = "") -> Message:
+        #prompt = self._fill_prompt_template(env_description)
+        env_description=info_from_env["env_description"]
+        situation=info_from_env["situation"]
+        reaction=info_from_env["reaction"]
+        
+        
+        character_name=self.name
+        prompt=get_prompt_reactionplan(name=character_name, location="Jiwan's Peak", situation=situation, reaction=reaction)
+        output=llm_local_inference("plan", prompt)
+        
+        print("====output of plan====")
+        print(output)
+        print("====parse of plan====")
+        print(parse_plan(output))        
+        
+        output=cut_sentence(output) # 3문장으로 자르기
+        output=parse_NPC_response(output) # (speaking): 제거
+        output=make_json_compatible(output) # json 형식으로 변환
+
+        
+        self.reaction=output
+        content='{{"text": "{}", "plan":"", "action": "Reaction"}}'.format(output)
+        
+        
+        message = Message(
+            content=content,
+            sender=self.name,
+            receiver=self.get_receiver(),
+        )
+
+        return message
+
+
+
 
 
 

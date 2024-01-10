@@ -62,6 +62,11 @@ class Simulation:
         return_message = asyncio.run(self.environment.reactionstep(*args, **kwargs))
         return return_message
 
+    def reactionplan(self, *args, **kwargs):
+        """Run the environment for one step and return the return message."""
+
+        return_message = asyncio.run(self.environment.reactionplanstep(*args, **kwargs))
+        return return_message
 
 
     def update_state(self, *args, **kwargs):

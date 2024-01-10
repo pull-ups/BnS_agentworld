@@ -28,8 +28,9 @@ export class NPC extends Actor {
   private targetNPC: NPC = undefined;
   private textBox: Label = undefined;
   private chatBox: Label = undefined;   //대화 보여주는 창 객체
-  private nameBox: Label = undefined;   
-  private reaction_plan: string[] = []; 
+  private nameBox: Label = undefined;
+  private reaction: string = ""; //현재 situation에 대한 reaction 내용
+  private reaction_plan: string[] = []; //reaction에 대한 plan
 
   public id: number;
   public direction: number = DIRECTION.DOWN;
@@ -225,12 +226,123 @@ export class NPC extends Actor {
     this.nameBox = undefined;
   }
 
+  public setReactionBox(text_short: string, text_long: string, player: Player): void {
+    this.destroyTextBox();
+    var scale = this.scene.cameras.main.zoom;
+    var scene = this.scene as TownScene;
+    
+    this.textBox = scene.rexUI.add
+      .label({
+        x: this.x + this.width / 2,
+        y: this.y - this.height * 0.2,
+        width: 48 * scale,
+        orientation: "x",
+        background: scene.rexUI.add.roundRectangle(
+          0,
+          0,
+          2,
+          2,
+          20,
+          COLOR_PRIMARY,
+          0.7
+        ),
+        text: scene.rexUI.wrapExpandText(
+          scene.add.text(0, 0, text_short, {
+            fontSize: 15,
+          })
+        ),
+        expandTextWidth: true,
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+        },
+      })
+      .setOrigin(0.5, 1.0)
+      .setScale(1 / scale, 1 / scale)
+      .setDepth(this.y + this.height * 0.8)
+      .layout();
+    this.textBox.setInteractive();
+
+    // Register the click event handler
+    this.textBox.on('pointerdown', () => this.setPlanbox(text_long, player));
+  }
+
+  private setPlanbox(text_long: string, player: Player): void {
+    var plan="1. A, 2. B, 3. C";
+    var scale = this.scene.cameras.main.zoom;
+    var scene = this.scene as TownScene;
+    var camera_height = this.scene.cameras.main.height;
+    this.chatBox = scene.rexUI.add
+      .label({
+        x: player.x + this.width / 2,
+        y: player.y - this.height * 0.6 + camera_height * 0.1,
+        width: 48 * scale * 6,
+        height: 48 * scale * 3,
+        orientation: "x",
+        background: scene.rexUI.add.roundRectangle(
+          0,
+          0,
+          2,
+          2,
+          20,
+          COLOR_DARK,
+          1
+        ),
+        text: scene.rexUI.wrapExpandText(
+          scene.add.text(0, 0, text_long + "\n\n\n\n" + plan, {
+            fontSize: 20,
+          })
+        ),
+        expandTextWidth: true,
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+        },
+      })
+      .setOrigin(0.5, 1.0)
+      .setScale(1 / scale, 1 / scale)
+      .setDepth(9999)
+      .layout();
+
+    var submitBtn = scene.rexUI.add
+    .label({
+      x: player.x,
+      y: player.y+70,
+      background: scene.rexUI.add
+        .roundRectangle(0, 0, 2, 2, 20, COLOR_LIGHT)
+        .setStrokeStyle(2, COLOR_LIGHT),
+      text: scene.add.text(0, 0, "Close"),
+      space: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 10,
+      },
+      })
+      .setOrigin(0)
+      .setScale(1 / scale, 1 / scale)
+      .setDepth(10000)
+      .layout();
+    submitBtn.setInteractive();
+    submitBtn.on('pointerdown', () => {
+      submitBtn.destroy();
+      this.destroyChatBox()
+    });
+
+
+  }
+
+
 
   public setTextBox(text: string, player: Player, speaking: boolean = true): void {
     this.destroyTextBox();
     var scale = this.scene.cameras.main.zoom;
     var scene = this.scene as TownScene;
-    var labelWidth = speaking ? 72 * scale : 24 * scale;
+    var labelWidth = speaking ? 72 * scale : 40 * scale;
     this.textBox = scene.rexUI.add
       .label({
         x: this.x + this.width / 2,
@@ -279,7 +391,7 @@ export class NPC extends Actor {
         x: player.x + this.width / 2,
         y: player.y - this.height * 0.6 + camera_height * 0.1,
         width: 48 * scale * 6,
-        height: 48 * scale * 6,
+        height: 48 * scale * 5,
         orientation: "x",
         background: scene.rexUI.add.roundRectangle(
           0,
@@ -404,6 +516,7 @@ export class NPC extends Actor {
       console.log(this.name + " is doing task: " + this.doingtask);
     }  
   }
+
   public setcurtaskendtime(curtaskendtime: number): void {
     this.curtaskendtime = curtaskendtime;
   }
@@ -417,6 +530,17 @@ export class NPC extends Actor {
   public getdialoghistorystring(): string {
     return this.dialoghistory_string;
   }
+  public setreaction(reaction: string): void {
+    if (reaction==""){
+      this.reaction="";
+      this.doingreaction=false;
+    }
+    else{
+      this.reaction = reaction;
+      this.doingreaction=true;
+    }
+  }
+
   public setreactionplan(doingreaction: boolean, reactionplan: string): void {
     this.doingreaction=doingreaction;
     if (doingreaction==true){
@@ -426,7 +550,9 @@ export class NPC extends Actor {
       this.reaction_plan = [];
     }
   }
-
+  public getreaction(): string {
+    return this.reaction;
+  }
   public getreactionplan(): string[] {
     return this.reaction_plan;
   }

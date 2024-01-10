@@ -37,6 +37,13 @@ class ReactionRequest(BaseModel):
     agent_ids: List[int]
     situation: str
 
+
+class ReactionPlanRequest(BaseModel):
+    agent_ids: List[int]
+    situation: str
+    reactions: List[str]
+
+
 app = FastAPI()
 
 app.add_middleware(
@@ -96,6 +103,22 @@ def reaction(message: ReactionRequest):
     print("==response of Reaction==")
     print(response)
     return [r.dict() for r in response]
+
+
+
+# class ReactionPlanRequest(BaseModel):
+#     agent_ids: List[int]
+#     situation: str
+#     reactions: List[str]
+
+@app.post("/reactionplan")
+def reactionplan(message: ReactionPlanRequest):
+    
+    response = agent_verse.reactionplan(agent_ids=message.agent_ids, situation=message.situation, reactions=message.reactions, llm="local")
+    print("==response of ReactionPlan==")
+    print(response)
+    return [r.dict() for r in response]
+
 
 
 

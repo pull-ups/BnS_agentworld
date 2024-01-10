@@ -15,6 +15,14 @@ from agentverse.message import Message
 from .. import env_registry as EnvironmentRegistry
 from ..base import BaseEnvironment
 
+def NPC_to_location(name, locations_to_agents):
+    # Iterate over each place and its associated people
+    for place, people in locations_to_agents.items():
+        # Check if the person is in the current set of people
+        if name in people:
+            return place
+    # Return None if the person is not found
+    return None
 
 def parse_NPC_response(text):
     "Jinsoyun (speaking): Lusung, you stand before me now, your presence unchanged, as stubborn as ev"
@@ -172,6 +180,7 @@ class PokemonEnvironment(BaseEnvironment):
                 locations_to_agents[loc["name"]] = set(loc["init_agents"])
             #/sngwon
             # locations_descriptions[loc["name"]] = loc["description"]
+        
         super().__init__(
             rule=rule,
             locations_to_agents=locations_to_agents,
@@ -196,7 +205,7 @@ class PokemonEnvironment(BaseEnvironment):
         # return [Message(content="Test", sender="May", receiver=["May"])]
         if llm is not None:
             if is_player:
-                return await self._respond_to_player_local(player_content, receiver, receiver_id, model_dict)
+                return await self._respond_to_player_local(player_content, receiver, receiver_id)
             else:
                 return await self._routine_step_local(agent_ids)
         else:
@@ -220,6 +229,56 @@ class PokemonEnvironment(BaseEnvironment):
     ) -> List[Message]:
         if llm is not None:
             return await self._reaction_local(agent_ids, situation)
+
+    
+    async def reactionplanstep(
+        self,
+        is_player: bool = False,
+        player_content: str = None,
+        receiver: str = None,
+        receiver_id: Optional[int] = None,
+        agent_ids: Optional[List[int]] = None,
+        situation: str = None,
+        reactions: List[str] = None,
+        llm: str = None,
+        model_dict: Optional[List[Any]] = None,
+    ) -> List[Message]:
+        if llm is not None:
+            return await self._reactionplan_local(agent_ids, situation, reactions)
+
+
+
+
+    async def _reactionplan_local(self, agent_ids, situation, reactions) -> List[Message]:
+        self.rule.update_visible_agents(self)
+
+        # agent_ids = self.rule.get_next_agent_idx(self)
+
+        # Generate current environment description
+        env_descriptions = self.rule.get_env_description(self)
+        info_from_envs=[{"env_description":env_descriptions[i], "situation":situation, "reaction":reactions[i]} for i in range(len(env_descriptions))]
+
+        # Generate the next message
+        messages = await asyncio.gather(
+            *[self.agents[i].areactionplan_local(info_from_envs[i]) for i in agent_ids]
+        )
+        
+        
+        # messages = self.get_test_messages()
+
+        # Some rules will select certain messages from all the messages
+        selected_messages = self.rule.select_message(self, messages)
+
+        # Update the memory of the agents
+        self.last_messages = selected_messages
+        self.rule.update_memory(self)
+        self.print_messages(selected_messages)
+
+        self.cnt_turn += 1
+        self.time += datetime.timedelta(minutes=5)
+
+        return selected_messages
+
 
 
     async def _reaction_local(self, agent_ids, situation) -> List[Message]:
@@ -251,8 +310,6 @@ class PokemonEnvironment(BaseEnvironment):
         self.time += datetime.timedelta(minutes=5)
 
         return selected_messages
-
-
 
     async def _routine_step_local(self, agent_ids) -> List[Message]:
         #sngwonprint
@@ -336,10 +393,9 @@ class PokemonEnvironment(BaseEnvironment):
         # Generate the next message
         messages = await asyncio.gather(
             # *[self.agents[i].astep_local(env_descriptions[i]) for i in agent_ids]
-            *[self.agents[i].astep_local(info_from_envs[i]) for i in agent_ids]
+            *[self.agents[i].astep_routine_local(info_from_envs[i]) for i in agent_ids]
         )
-        #print("======messages=====")
-        #print(messages)
+
         # agent들 기억에 저장
         for message in messages:
             #conversation이고, 들은게 아니고 말한거라면
@@ -354,20 +410,16 @@ class PokemonEnvironment(BaseEnvironment):
                 if text == "conversation_finish":
                     for agent in self.agents:
                         if (agent.name == sender) or (agent.name == receiver):
-                            agent.dialog_history=[]
+                            agent.dialog_withNPC_history=[]
                 else:
                     for agent in self.agents:
                         if (agent.name == sender) or (agent.name == receiver):
-                            agent.dialog_history.append((sender, text))
+                            agent.dialog_withNPC_history.append((sender, text))
                     
             
         # messages = self.get_test_messages()
 
         # Some rules will select certain messages from all the messages
-        
-        
-        
-        
         
         selected_messages = self.rule.select_message(self, messages)
         #selected_messages =  messages
@@ -380,13 +432,12 @@ class PokemonEnvironment(BaseEnvironment):
         self.time += datetime.timedelta(minutes=5)
 
         return selected_messages
-
+    #대화 나눈 기록이 사라지지 않음
     async def _respond_to_player_local(
         self,
         player_content: str = None,
         receiver: str = None,
-        receiver_id: Optional[int] = None,
-        
+        receiver_id: Optional[int] = None,     
     ) -> List[Message]:
         if receiver_id is None:
             for agent in self.agents:
@@ -396,105 +447,41 @@ class PokemonEnvironment(BaseEnvironment):
         agent_ids = [receiver_id]
         agent_name = receiver
         player_message = Message(
-            sender="Seungwon", content=player_content, receiver=[agent_name]
+            sender="Seungwon", content=player_content.replace("\n", ""), receiver=[agent_name]
         )
+
 
         # Update the set of visible agents for each agent
         self.rule.update_visible_agents(self)
 
         # Generate current environment description
         env_descriptions = self.rule.get_env_description(self, player_content)
-
-        # Generate the next message
-        messages = await asyncio.gather(
-            *[self.agents[i].astep_respondtoplayer(env_descriptions[i]) for i in agent_ids]
-        )
-
-        # Some rules will select certain messages from all the messages
-        # selected_messages = self.rule.select_message(self, messages)
-
-        # Update the memory of the agents
-        self.last_message_for_userchat = [player_message, *messages]
-        self.rule.update_memory(self)
-        self.print_messages(messages)
-
-        self.cnt_turn += 1
-
-        return messages
-
-
-
-
-
-
-
-
-
-
-
-    async def _routine_step(self, agent_ids) -> List[Message]:
-        self.rule.update_visible_agents(self)
-
-        # agent_ids = self.rule.get_next_agent_idx(self)
-
-        # Generate current environment description
-        env_descriptions = self.rule.get_env_description(self)
-
-        # Generate the next message
-        messages = await asyncio.gather(
-            *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
-        )
-        # messages = self.get_test_messages()
-
-        # Some rules will select certain messages from all the messages
-        selected_messages = self.rule.select_message(self, messages)
-
-        # Update the memory of the agents
-        self.last_messages = selected_messages
-        self.rule.update_memory(self)
-        self.print_messages(selected_messages)
-
-        self.cnt_turn += 1
-        self.time += datetime.timedelta(minutes=5)
-
-        return selected_messages
-
-    async def _respond_to_player(
-        self,
-        player_content: str = None,
-        receiver: str = None,
-        receiver_id: Optional[int] = None,
-    ) -> List[Message]:
-        if receiver_id is None:
-            for agent in self.agents:
-                if agent.name == receiver:
-                    receiver_id = agent.agent_id
-                    break
-        agent_ids = [receiver_id]
-        agent_name = receiver
-        player_message = Message(
-            sender="Brenden", content=player_content, receiver=[agent_name]
-        )
-
-        # Update the set of visible agents for each agent
-        self.rule.update_visible_agents(self)
-
-        # Generate current environment description
-        env_descriptions = self.rule.get_env_description(self, player_content)
-
-        # Generate the next message
-        messages = await asyncio.gather(
-            *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
-        )
-
-        # Some rules will select certain messages from all the messages
-        # selected_messages = self.rule.select_message(self, messages)
-
-        # Update the memory of the agents
-        # print("==============in respond to player=================")
-        # print("player message:", player_message)
-        # print("messages:", messages)
         
+        # Generate the next message
+        messages = await asyncio.gather(
+            *[self.agents[i].astep_respondtoplayer_local(env_descriptions[i], player_message) for i in agent_ids]
+            
+        )
+
+        
+        #[Message(content='{"to": "Seungwon", "text": " Hello, Seungwon. Nice to see you again.", "action": "speak"}', 
+        # sender='HongSokyun', 
+        # receiver={'Jinsoyun', 'HongSokyun'}, sender_agent=None, tool_response=[])]
+        for message in messages:
+            message_content=json.loads(message.content)
+            sender=message.sender
+            text=message_content["text"]
+            
+            for agent in self.agents:
+                if (agent.name == sender):
+                    agent.dialog_withplayer_history.append(("Seungwon", player_content))
+                    agent.dialog_withplayer_history.append((sender, text))
+                    
+            
+        # Some rules will select certain messages from all the messages
+        # selected_messages = self.rule.select_message(self, messages)
+
+        # Update the memory of the agents
         self.last_message_for_userchat = [player_message, *messages]
         self.rule.update_memory(self)
         self.print_messages(messages)
@@ -512,6 +499,9 @@ class PokemonEnvironment(BaseEnvironment):
             # original_location = self.get_agent_to_location()[agent_name]
             # self.locations_to_agents[original_location].remove(agent_name)
             self.locations_to_agents[location].add(agent_name)
+        for agent in self.agents:
+            agent.location=NPC_to_location(agent.name, self.locations_to_agents)
+            print(agent.location)
 
     def get_agent_to_location(self) -> Dict[str, str]:
         ret = {}
@@ -576,3 +566,76 @@ class PokemonEnvironment(BaseEnvironment):
             ),
         ]
         return messages
+
+
+    # async def _routine_step(self, agent_ids) -> List[Message]:
+    #     self.rule.update_visible_agents(self)
+
+    #     # agent_ids = self.rule.get_next_agent_idx(self)
+
+    #     # Generate current environment description
+    #     env_descriptions = self.rule.get_env_description(self)
+
+    #     # Generate the next message
+    #     messages = await asyncio.gather(
+    #         *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
+    #     )
+    #     # messages = self.get_test_messages()
+
+    #     # Some rules will select certain messages from all the messages
+    #     selected_messages = self.rule.select_message(self, messages)
+
+    #     # Update the memory of the agents
+    #     self.last_messages = selected_messages
+    #     self.rule.update_memory(self)
+    #     self.print_messages(selected_messages)
+
+    #     self.cnt_turn += 1
+    #     self.time += datetime.timedelta(minutes=5)
+
+    #     return selected_messages
+
+    # async def _respond_to_player(
+    #     self,
+    #     player_content: str = None,
+    #     receiver: str = None,
+    #     receiver_id: Optional[int] = None,
+    # ) -> List[Message]:
+    #     if receiver_id is None:
+    #         for agent in self.agents:
+    #             if agent.name == receiver:
+    #                 receiver_id = agent.agent_id
+    #                 break
+    #     agent_ids = [receiver_id]
+    #     agent_name = receiver
+    #     player_message = Message(
+    #         sender="Brenden", content=player_content, receiver=[agent_name]
+    #     )
+
+    #     # Update the set of visible agents for each agent
+    #     self.rule.update_visible_agents(self)
+
+    #     # Generate current environment description
+    #     env_descriptions = self.rule.get_env_description(self, player_content)
+
+    #     # Generate the next message
+    #     messages = await asyncio.gather(
+    #         *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
+    #     )
+
+    #     # Some rules will select certain messages from all the messages
+    #     # selected_messages = self.rule.select_message(self, messages)
+
+    #     # Update the memory of the agents
+    #     # print("==============in respond to player=================")
+    #     # print("player message:", player_message)
+    #     # print("messages:", messages)
+        
+    #     self.last_message_for_userchat = [player_message, *messages]
+    #     self.rule.update_memory(self)
+    #     self.print_messages(messages)
+
+    #     self.cnt_turn += 1
+
+    #     return messages
+

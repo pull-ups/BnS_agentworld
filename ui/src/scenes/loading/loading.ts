@@ -26,6 +26,12 @@ export class LoadingScene extends Scene {
       frameHeight: 20,
     });
 
+    // this.load.spritesheet("Lusung", "sprites/dot_dog.png", {
+    //   frameWidth: 14,
+    //   frameHeight: 20,
+    // });
+
+
     this.load.spritesheet("Yura", "sprites/steven.png", {
       frameWidth: 16,
       frameHeight: 21,
