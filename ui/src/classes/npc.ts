@@ -28,7 +28,7 @@ export class NPC extends Actor {
   private targetNPC: NPC = undefined;
   private textBox: Label = undefined;
   private chatBox: Label = undefined;   //대화 보여주는 창 객체
-
+  private nameBox: Label = undefined;   
   private reaction_plan: string[] = []; 
 
   public id: number;
@@ -171,16 +171,71 @@ export class NPC extends Actor {
     if (this.chatBox == undefined) return;
    
   }
+  // nameBox
+  public setNameBox(): void {
+    this.destroyNameBox();
 
-  public setTextBox(text: string, player: Player): void {
+    const mapping = {
+      "Jinsoyun": "진서연",
+      "Yura": "유란",
+      "HongSokyun": "홍석근",
+      "Lusung": "무성"
+    };
+  
+    var scale = this.scene.cameras.main.zoom;
+    var scene = this.scene as TownScene;
+    this.nameBox = scene.rexUI.add
+      .label({
+        x: this.x + this.width / 2,
+        //y: this.y - this.height * 0.2,
+        y: this.y + 20,
+        width: 25 * scale,
+        orientation: "x",
+        background: scene.rexUI.add.roundRectangle(
+          0,
+          0,
+          2,
+          2,
+          20,
+          COLOR_PRIMARY,
+          0.7
+        ),
+        text: scene.rexUI.wrapExpandText(
+          scene.add.text(0, 0, mapping[this.name], {
+            fontSize: 20,
+            align: "center",
+          })
+        ),
+        expandTextWidth: true,
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+        },
+      })
+      .setOrigin(0.5, 0.0)
+      .setScale(1 / scale, 1 / scale)
+      .setDepth(this.y + this.height * 0.8)
+      .layout();
+  }
+
+  public destroyNameBox(): void {
+    if (this.nameBox != undefined) this.nameBox.destroy();
+    this.nameBox = undefined;
+  }
+
+
+  public setTextBox(text: string, player: Player, speaking: boolean = true): void {
     this.destroyTextBox();
     var scale = this.scene.cameras.main.zoom;
     var scene = this.scene as TownScene;
+    var labelWidth = speaking ? 72 * scale : 24 * scale;
     this.textBox = scene.rexUI.add
       .label({
         x: this.x + this.width / 2,
         y: this.y - this.height * 0.2,
-        width: 48 * scale,
+        width: labelWidth,
         orientation: "x",
         background: scene.rexUI.add.roundRectangle(
           0,
@@ -193,7 +248,7 @@ export class NPC extends Actor {
         ),
         text: scene.rexUI.wrapExpandText(
           scene.add.text(0, 0, text, {
-            fontSize: 20,
+            fontSize: 15,
           })
         ),
         expandTextWidth: true,
@@ -224,7 +279,7 @@ export class NPC extends Actor {
         x: player.x + this.width / 2,
         y: player.y - this.height * 0.6 + camera_height * 0.1,
         width: 48 * scale * 6,
-        height: 48 * scale * 3,
+        height: 48 * scale * 6,
         orientation: "x",
         background: scene.rexUI.add.roundRectangle(
           0,
@@ -256,7 +311,7 @@ export class NPC extends Actor {
     var submitBtn = scene.rexUI.add
     .label({
       x: player.x,
-      y: player.y+50,
+      y: player.y+70,
       background: scene.rexUI.add
         .roundRectangle(0, 0, 2, 2, 20, COLOR_LIGHT)
         .setStrokeStyle(2, COLOR_LIGHT),
@@ -354,7 +409,7 @@ export class NPC extends Actor {
   }
   public adddialoghistory(dialog: string): void {
     this.dialoghistory.push(dialog);
-    this.dialoghistory_string += dialog + "\n";
+    this.dialoghistory_string += dialog + "\n\n";
   }
   public getdialoghistory(): string[] {
     return this.dialoghistory;

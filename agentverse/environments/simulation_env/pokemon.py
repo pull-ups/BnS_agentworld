@@ -15,6 +15,19 @@ from agentverse.message import Message
 from .. import env_registry as EnvironmentRegistry
 from ..base import BaseEnvironment
 
+
+def parse_NPC_response(text):
+    "Jinsoyun (speaking): Lusung, you stand before me now, your presence unchanged, as stubborn as ev"
+    try:
+        if "(speaking):" in text:
+            text=text.split("(speaking):")[1]
+        elif ":" in text[:30]:
+            text=text.split(":")[1]
+        return text
+    except:
+        return text
+
+
 def serialize_tuple_list(tuple_list):
     flat_list = []
     for tup in tuple_list:
@@ -42,7 +55,7 @@ def get_already_in_conversation_pair(self):
     for message in self.last_messages:
         if message.content != None:
             
-            print("message content : ", message.content)
+            #print("message content : ", message.content)
             message_content=json.loads(message.content)
             if message_content["action"]=="Conversation":
                 #import pdb; pdb.set_trace()
@@ -55,8 +68,7 @@ def get_already_in_conversation_pair(self):
                     already_in_conversation_agent_ids_pair.append(conversation_pairs)
     return already_in_conversation_agent_ids_pair
 
-
-def get_conversation_pair(environment, agent_ids, nearbyNPCs, already_in_conversation_agent_ids_pair, prob=1.0):
+def get_conversation_pair(environment, agent_ids, nearbyNPCs, already_in_conversation_agent_ids_pair, prob=0.5):
     #주변 npc중에서 대화중이지 않은 npc들을 뽑아서 대화시키기
     already_in_conversation_agent_ids=serialize_tuple_list(already_in_conversation_agent_ids_pair)
     
@@ -184,7 +196,7 @@ class PokemonEnvironment(BaseEnvironment):
         # return [Message(content="Test", sender="May", receiver=["May"])]
         if llm is not None:
             if is_player:
-                return await self._respond_to_player_local(player_content, receiver, receiver_id)
+                return await self._respond_to_player_local(player_content, receiver, receiver_id, model_dict)
             else:
                 return await self._routine_step_local(agent_ids)
         else:
@@ -314,9 +326,6 @@ class PokemonEnvironment(BaseEnvironment):
                         conversation_infos[agent_idx]["speaker"]=False
                         conversation_infos[agent_idx]["listener"]=True
 
-
-
-
         # info_from_envs={
         #     "env_descriptions":env_descriptions,
         #     "nearbyNPCs":nearbyNPCs
@@ -329,12 +338,39 @@ class PokemonEnvironment(BaseEnvironment):
             # *[self.agents[i].astep_local(env_descriptions[i]) for i in agent_ids]
             *[self.agents[i].astep_local(info_from_envs[i]) for i in agent_ids]
         )
-
+        #print("======messages=====")
+        #print(messages)
+        # agent들 기억에 저장
+        for message in messages:
+            #conversation이고, 들은게 아니고 말한거라면
+            message_content=json.loads(message.content)
+            if (message_content["action"]=="Conversation") and message_content["text"] != "" : 
+                # 듣는사람, 말하는 사람 메모리에 저장
+                    
+                sender=message.sender
+                receiver=message_content["to"]
+                text=message_content["text"]
+                #text=parse_NPC_response(message_content["text"])
+                if text == "conversation_finish":
+                    for agent in self.agents:
+                        if (agent.name == sender) or (agent.name == receiver):
+                            agent.dialog_history=[]
+                else:
+                    for agent in self.agents:
+                        if (agent.name == sender) or (agent.name == receiver):
+                            agent.dialog_history.append((sender, text))
+                    
+            
         # messages = self.get_test_messages()
 
         # Some rules will select certain messages from all the messages
+        
+        
+        
+        
+        
         selected_messages = self.rule.select_message(self, messages)
-
+        #selected_messages =  messages
         # Update the memory of the agents
         self.last_messages = selected_messages
         self.rule.update_memory(self)
@@ -350,6 +386,7 @@ class PokemonEnvironment(BaseEnvironment):
         player_content: str = None,
         receiver: str = None,
         receiver_id: Optional[int] = None,
+        
     ) -> List[Message]:
         if receiver_id is None:
             for agent in self.agents:
@@ -359,7 +396,7 @@ class PokemonEnvironment(BaseEnvironment):
         agent_ids = [receiver_id]
         agent_name = receiver
         player_message = Message(
-            sender="Brenden", content=player_content, receiver=[agent_name]
+            sender="Seungwon", content=player_content, receiver=[agent_name]
         )
 
         # Update the set of visible agents for each agent
@@ -370,7 +407,7 @@ class PokemonEnvironment(BaseEnvironment):
 
         # Generate the next message
         messages = await asyncio.gather(
-            *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
+            *[self.agents[i].astep_respondtoplayer(env_descriptions[i]) for i in agent_ids]
         )
 
         # Some rules will select certain messages from all the messages

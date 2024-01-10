@@ -16,22 +16,22 @@ export class LoadingScene extends Scene {
       frameHeight: 21,
     });
 
-    this.load.spritesheet("May", "sprites/may.png", {
+    this.load.spritesheet("Jinsoyun", "sprites/may.png", {
       frameWidth: 14,
       frameHeight: 20,
     });
 
-    this.load.spritesheet("Birch", "sprites/birch.png", {
+    this.load.spritesheet("Lusung", "sprites/birch.png", {
       frameWidth: 16,
       frameHeight: 20,
     });
 
-    this.load.spritesheet("Steven", "sprites/steven.png", {
+    this.load.spritesheet("Yura", "sprites/steven.png", {
       frameWidth: 16,
       frameHeight: 21,
     });
 
-    this.load.spritesheet("Maxie", "sprites/maxie.png", {
+    this.load.spritesheet("HongSokyun", "sprites/maxie.png", {
       frameWidth: 16,
       frameHeight: 20,
     });

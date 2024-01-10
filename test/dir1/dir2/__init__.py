@@ -1,0 +1,1 @@
+from .test2 import some_function_in_test2

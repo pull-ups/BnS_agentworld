@@ -306,7 +306,7 @@
                 {
                  "height":0,
                  "id":12,
-                 "name":"May",
+                 "name":"Jinsoyun",
                  "point":true,
                  "properties":[
                         {
@@ -324,25 +324,7 @@
                 {
                  "height":0,
                  "id":13,
-                 "name":"Steven",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"id",
-                         "type":"int",
-                         "value":2
-                        }],
-                 "rotation":0,
-                 "type":"npc",
-                 "visible":true,
-                 "width":0,
-                 "x":480,
-                 "y":304
-                }, 
-                {
-                 "height":0,
-                 "id":14,
-                 "name":"Birch",
+                 "name":"Lusung",
                  "point":true,
                  "properties":[
                         {
@@ -354,13 +336,31 @@
                  "type":"npc",
                  "visible":true,
                  "width":0,
-                 "x":240,
-                 "y":240
+                 "x":480,
+                 "y":304
+                }, 
+                {
+                 "height":0,
+                 "id":14,
+                 "name":"Yura",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"int",
+                         "value":2
+                        }],
+                 "rotation":0,
+                 "type":"npc",
+                 "visible":true,
+                 "width":0,
+                 "x":440,
+                 "y":304
                 },
                 {
                      "height":0,
                      "id":15,
-                     "name":"Maxie",
+                     "name":"HongSokyun",
                      "point":true,
                      "properties":[
                             {
@@ -372,8 +372,8 @@
                      "type":"npc",
                      "visible":true,
                      "width":0,
-                     "x":440,
-                     "y":304
+                     "x":240,
+                     "y":240
                 }
                 ],
          "opacity":1,

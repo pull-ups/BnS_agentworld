@@ -14,6 +14,10 @@ import { TileXYType } from "../../phaser3-rex-plugins/plugins/board/types/Positi
 import { shuffle } from "../../utils";
 import { COLOR_DARK, COLOR_LIGHT, COLOR_PRIMARY } from "../../constants";
 
+
+
+
+
 export class TownScene extends Scene {
   private timeFrame: number = 0;
   private totaltime: number = 0;
@@ -51,6 +55,11 @@ export class TownScene extends Scene {
     this.initMap();
     this.initSprite();
     this.initCamera();
+
+
+    this.npcGroup.getChildren().forEach(function (npc) {
+      (npc as NPC).setNameBox();
+    });
     // this.add.grid(0, 0, 1024, 1024, 16, 16, 0x000000).setAlpha(0.1);
   }
 
@@ -66,7 +75,9 @@ export class TownScene extends Scene {
     this.npcGroup.getChildren().forEach(function (npc) {
       (npc as NPC).update();
     });
-    
+
+
+
 
     // if (this.timeFrame > 5000) {
     if (this.timeFrame > 10000) {
@@ -115,13 +126,14 @@ export class TownScene extends Scene {
               var content = JSON.parse(data[i].content);
               switch (content.action) {
                 case "MoveTo":
+
                   var tile = this.getRandomTileAtLocation(content.to);
                   if (tile == undefined) break;
                   npc.destroyTextBox();
+                  npc.destroyNameBox();
+
                   this.moveNPC(shouldUpdate[i], tile, undefined, content.to);
                   break;
-
-
                 case "Speak":
                   var ret = this.getNPCNeighbor(content.to);
                   var tile = ret[0];
@@ -140,6 +152,7 @@ export class TownScene extends Scene {
 
 
                 case "Conversation":
+                  npc.setNameBox();
                   //May: {"to": "Steven", "text": "Hi Steven,  I am May. How are you?", "action": "Conversation", "speaking": "True"}
                   //Steven: {"to": "May", "text": "", "action": "Conversation", "speaking": "False"}
                   if (content.text == "conversation_finish"){
@@ -151,10 +164,16 @@ export class TownScene extends Scene {
                       }
                     }
                     npc.emptydialoghistory();
+                    npc.destroyNameBox();
                     break;
                   }
 
+
+                  // Lusung: {"to": "Yura", "text": "", "action": "Conversation", "speaking": "False"}
+                  // Yura: {"to": "Lusung", "text": " Ah, Lusung, it is indeed a pleasure to see you again. This place holds a special significance for us, doesn't it? The memories of our shared trials and victories still echo through the whispers of the breeze that caresses these ancient
+
                   // 지금 들어온 발화를 npc와 listener의 dialoghistory에 추가
+                  
                   if (content.text != ""){
                     for (let i = 0; i < this.npcGroup.getLength(); i++) {
                       if ((allNpcs[i] as NPC).name == content.to){
@@ -182,10 +201,11 @@ export class TownScene extends Scene {
                     npc.setTextBox(content.text, this.player);
                   }
                   else{
-                    npc.setTextBox("Listening...", this.player);
+                    npc.setTextBox("Listening...", this.player, false);
                   }
                   break;
                 default:
+                  npc.setNameBox();
                   var temp_time=30000;
                   npc.setcurtaskendtime(this.totaltime+temp_time);
                   npc.setTextBox("[" + content.action + "]", this.player);
